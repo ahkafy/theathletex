@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('capacity')->nullable();
             $table->string('venue')->nullable();
             $table->string('cover_photo')->nullable();
-            $table->boolean('is_open')->default(0);
+            $table->enum('status', ['scheduled', 'open', 'closed', 'complete'])->default('scheduled');
             $table->timestamps();
         });
     }

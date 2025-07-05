@@ -4,32 +4,24 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Transaction extends Model
+class EventFee extends Model
 {
     protected $fillable = [
-        'user_id',
         'event_id',
-        'transaction_id',
-        'amount',
-        'payment_method',
-        'status',
-        'description',
-        'transaction_date',
-        'currency',
+        'fee_type', // e.g., 'registration', 'ticket', etc.
+        'fee_amount',
+        'is_active', // Indicates if the fee is currently active
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 
     public function event()
     {
+        // Define the relationship with the Event model
         return $this->belongsTo(Event::class);
     }
 
     public function getStatusAttribute($value)
     {
+        // Return the status as a human-readable string
         return ucfirst($value);
     }
 }

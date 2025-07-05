@@ -15,11 +15,17 @@ class Event extends Model
         'capacity',
         'cover_photo',
         'venue',
-        'is_open',
+        'status',
     ];
 
     public function getRouteKeyName()
     {
         return 'slug';
+    }
+
+    public function fees()
+    {
+        // Define the relationship with EventFee model for each event
+        return $this->hasMany(EventFee::class);
     }
 }
