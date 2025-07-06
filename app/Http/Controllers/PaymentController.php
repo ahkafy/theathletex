@@ -27,12 +27,10 @@ class PaymentController extends Controller
         // SSLCommerz credentials
         $store_id = env('SSLCOMMERZ_STORE_ID');
         $store_passwd = env('SSLCOMMERZ_STORE_PASSWORD');
-        $url = env('SSLCOMMERZ_SANDBOX', true)
-            ? "https://sandbox.sslcommerz.com/gwprocess/v4/api.php"
-            : "https://securepay.sslcommerz.com/gwprocess/v4/api.php";
+        $url = "https://securepay.sslcommerz.com/gwprocess/v4/api.php";
 
-        $post_data['store_id'] = $store_id;
-        $post_data['store_passwd'] = $store_passwd;
+        $post_data['store_id'] = 'theathletex0live';
+        $post_data['store_passwd'] = '686514B9F38E430108';
 
         $handle = curl_init($url);
         curl_setopt($handle, CURLOPT_TIMEOUT, 30);
@@ -46,6 +44,7 @@ class PaymentController extends Controller
 
         if ($code == 200 && !(curl_errno($handle))) {
             $sslcommerzResponse = json_decode($content, true);
+            \dd($content);
             if (isset($sslcommerzResponse['GatewayPageURL']) && $sslcommerzResponse['GatewayPageURL'] != "") {
                 return redirect($sslcommerzResponse['GatewayPageURL']);
             } else {

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Transaction extends Model
 {
     protected $fillable = [
-        'user_id',
+        'participant_id',
         'event_id',
         'transaction_id',
         'amount',
@@ -18,9 +18,9 @@ class Transaction extends Model
         'currency',
     ];
 
-    public function user()
+    public function participant()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Participant::class);
     }
 
     public function event()
