@@ -13,6 +13,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::middleware('auth:admin')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/participants', [DashboardController::class, 'participants'])->name('participants');
 
         Route::get('/events', [EventController::class, 'index'])->name('events.index');
         Route::get('/events/create', [EventController::class, 'create'])->name('events.create');

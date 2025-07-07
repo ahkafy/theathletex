@@ -7,6 +7,7 @@ use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\Admin\EventController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\SslCommerzPaymentController;
 
 
 
@@ -30,3 +31,16 @@ Route::get('/payment/fail', [PaymentController::class, 'fail'])->name('payment.f
 Route::get('/payment/cancel', [PaymentController::class, 'cancel'])->name('payment.cancel');
 
 
+// SSLCOMMERZ Start
+Route::get('/example1', [SslCommerzPaymentController::class, 'exampleEasyCheckout']);
+Route::get('/example2', [SslCommerzPaymentController::class, 'exampleHostedCheckout']);
+
+Route::post('/pay', [SslCommerzPaymentController::class, 'index']);
+//Route::post('/pay-via-ajax', [SslCommerzPaymentController::class, 'payViaAjax']);
+
+Route::post('/success', [SslCommerzPaymentController::class, 'success']);
+Route::post('/fail', [SslCommerzPaymentController::class, 'fail']);
+Route::post('/cancel', [SslCommerzPaymentController::class, 'cancel']);
+
+Route::post('/ipn', [SslCommerzPaymentController::class, 'ipn']);
+//SSLCOMMERZ END

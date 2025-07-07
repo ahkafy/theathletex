@@ -157,7 +157,8 @@ class RegistrationController extends Controller
 
     public function paymentInit(Request $request, $trxID)
     {
-        $transaction = Transaction::find($trxID)->with('participant', 'event')->first();
+        $transaction = Transaction::where('id', $trxID)->with('participant', 'event')->first();
+
         if (!$transaction) {
             return redirect()->back()
                 ->withInput()
@@ -168,9 +169,6 @@ class RegistrationController extends Controller
         // For demonstration, we will just return a success message
         return view('registration.payment', compact('transaction'))->with('success', 'Payment initiated successfully. Please proceed with the payment.');
     }
-
-
-
 
     function smsSend($phone, $msg) {
         $url = "http://bulksmsbd.net/api/smsapi";
