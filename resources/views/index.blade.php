@@ -90,7 +90,7 @@
                 <div class="card rounded-1 col-12 col-md-4 col-lg-3 mb-4 mx-2">
                     <a href="{{ url('#') }}" class="card-title d-block nav-link p-3 fw-bold">{{ $event->name }}</a>
                     <a class="d-block px-3" href="{{ url('#') }}">
-                        <img src="{{ url($event->cover_photo) }}" class="card-img-top rounded-0 object-fit-cover" alt="Event 1 Image" style="height: 180px;">
+                        <img src="{{ url($event->cover_photo) }}" class="card-img-top rounded-0 object-fit-cover" alt="Event 1 Image">
                     </a>
                     <div class="card-body p-0">
                         <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Status:</span> {{ $event->status }}</p>
