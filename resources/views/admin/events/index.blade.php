@@ -85,8 +85,8 @@
                                 </div>
                             </td>
                             <td>
-                                <a href="{{ route('admin.events.show', $event->id) }}" class="btn btn-sm btn-info">View</a>
-                                <a href="{{ route('admin.events.edit', $event->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                               <!-- <a href="{{ route('admin.events.show', $event->id) }}" class="btn btn-sm btn-info">View</a>
+                                <a href="{{ route('admin.events.edit', $event->id) }}" class="btn btn-sm btn-warning">Edit</a>-->
                                 <form action="{{ route('admin.events.destroy', $event->id) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')

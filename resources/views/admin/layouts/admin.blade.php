@@ -57,10 +57,10 @@
                         <a class="nav-link text-white" href="{{ route('admin.dashboard') }}">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ route('admin.dashboard') }}">Users</a>
+                        <a class="nav-link text-white" href="{{ route('admin.participants') }}">Participants</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ route('admin.dashboard') }}">Contests</a>
+                        <a class="nav-link text-white" href="{{ route('admin.events.index') }}">Events</a>
                     </li>
                     <!-- Add more sidebar links as needed -->
                 </ul>
