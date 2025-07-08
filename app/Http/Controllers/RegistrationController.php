@@ -79,6 +79,7 @@ class RegistrationController extends Controller
     {
         $request->validate([
             'reg_type' => 'required',
+            'category' => 'required',
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:20',
@@ -112,6 +113,7 @@ class RegistrationController extends Controller
         $participant = new Participant();
         $participant->event_id = $eventID;
         $participant->reg_type = $request->input('reg_type');
+        $participant->category = $request->input('category');
         $participant->fee = $fee->fee_amount; // Assuming fee_amount is a field in the fees table
         $participant->name = $request->input('name');
         $participant->email = $request->input('email');
