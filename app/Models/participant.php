@@ -33,5 +33,10 @@ class Participant extends Model
         return $this->belongsTo(Event::class);
     }
 
+    public function category()
+    {
+        return $this->belongsTo(EventCategory::class, 'category', 'name');
+    }
+
 
 }
