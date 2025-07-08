@@ -28,7 +28,7 @@
                 <select class="form-select @error('reg_type') is-invalid @enderror" id="reg_type" name="reg_type" required>
                     <option selected disabled>Select Registration Type</option>
                     @foreach($event->fees as $fee)
-                        <option value="{{ $fee->fee_type }}" {{ old('reg_type') == $fee->fee_type ? 'selected' : '' }}>
+                        <option value="{{ $fee->id }}" {{ old('reg_type') == $fee->fee_type ? 'selected' : '' }}>
                             {{ ucfirst($fee->fee_type) }}
                             @if(isset($fee->fee_amount))
                                 - {{ number_format($fee->fee_amount, 2) }} {{ $fee->currency ?? 'BDT' }}

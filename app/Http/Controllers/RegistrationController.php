@@ -96,14 +96,16 @@ class RegistrationController extends Controller
             'payment_method' => 'required|string|max:50',
         ]);
 
-        $event = Event::find($eventID)->with('fees')->first();
+        $event = Event::where('id', $eventID)->with('fees')->first();
+
         if (!$event) {
             return redirect()->back()
                 ->withInput()
                 ->withErrors(['event' => 'Event not found.']);
         }
 
-        $fee = $event->fees->where('fee_type', $request->input('reg_type'))->first();
+        $fee = $event->fees->where('id', $request->input('reg_type'))->first();
+
         if (!$fee) {
             return redirect()->back()
                 ->withInput()
@@ -112,7 +114,7 @@ class RegistrationController extends Controller
 
         $participant = new Participant();
         $participant->event_id = $eventID;
-        $participant->reg_type = $request->input('reg_type');
+        $participant->reg_type = $fee->fee_type;
         $participant->category = $request->input('category');
         $participant->fee = $fee->fee_amount; // Assuming fee_amount is a field in the fees table
         $participant->name = $request->input('name');
