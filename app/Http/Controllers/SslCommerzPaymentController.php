@@ -94,7 +94,7 @@ class SslCommerzPaymentController extends Controller
     {
         $tran_id = $request->input('tran_id');
 
-        return redirect()->route('index')
+        return redirect()->route('payment.init', ['trxID' => $tran_id])
             ->with('error', 'Transaction is Failed');
 
     }
@@ -104,7 +104,7 @@ class SslCommerzPaymentController extends Controller
 
         $tran_id = $request->input('tran_id');
 
-        return redirect()->route('index')
+        return redirect()->route('payment.init', ['trxID' => $tran_id])
             ->with('error', 'Transaction is Cancelled');
 
     }
