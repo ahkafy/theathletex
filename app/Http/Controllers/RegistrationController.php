@@ -62,7 +62,7 @@ class RegistrationController extends Controller
 
     public function registrationForm($eventID)
     {
-        $event = Event::find($eventID)->with('fees')->first();
+        $event = Event::where('id', $eventID)->with('fees', 'categories')->first();
         if (!$event) {
             return redirect('/')->with('error', 'Event not found');
         }

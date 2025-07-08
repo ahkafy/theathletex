@@ -24,6 +24,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 
         Route::post('/events/event/fees', [EventController::class, 'storefees'])->name('fees.store');
+        Route::post('/events/event/category', [EventController::class, 'storeCategories'])->name('categories.store');
 
         // Add other admin routes here
         Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');

@@ -18,6 +18,7 @@
                         <th>Dates</th>
                         <th>Status</th>
                         <th>Ticket/Fees</th>
+                        <th>Categories</th>
                         <th>Actions</th>
                         <th>#</th>
                     </tr>
@@ -48,41 +49,25 @@
                                 @endif
                             </td>
                             <td>
+                                @if($event->categories && $event->categories->count())
+                                    <ol class="mb-0 ps-3">
+                                        @foreach($event->categories as $category)
+                                            <li>{{ $category->name }}</li>
+                                        @endforeach
+                                    </ol>
+                                @else
+                                    <span class="text-muted">No categories</span>
+                                @endif
+                            </td>
+                            <td>
                                 <!-- Button trigger modal -->
                                 <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#createFeeModal{{ $event->id }}">
                                     Create Fee
                                 </button>
-
-                                <!-- Modal -->
-                                <div class="modal fade" id="createFeeModal{{ $event->id }}" tabindex="-1" aria-labelledby="createFeeModalLabel{{ $event->id }}" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <form action="{{ route('admin.fees.store') }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="event_id" value="{{ $event->id }}">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="createFeeModalLabel{{ $event->id }}">Create Fee for {{ $event->name }}</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="mb-3">
-                                                        <label for="fee_name_{{ $event->id }}" class="form-label">Fee Name</label>
-                                                        <input type="text" class="form-control" id="fee_name_{{ $event->id }}" name="fee_type" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="fee_amount_{{ $event->id }}" class="form-label">Amount</label>
-                                                        <input type="number" class="form-control" id="fee_amount_{{ $event->id }}" name="fee_amount" step="0.01" required>
-                                                    </div>
-                                                    <input type="hidden" name="event_id" value="{{ $event->id }}">
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-primary">Create Fee</button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
+                                <!-- Button trigger category modal -->
+                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#createCategoryModal{{ $event->id }}">
+                                    Create Category
+                                </button>
                             </td>
                             <td>
                                <!-- <a href="{{ route('admin.events.show', $event->id) }}" class="btn btn-sm btn-info">View</a>
@@ -104,9 +89,65 @@
 
 
 
+<!-- Modal -->
+<div class="modal fade" id="createFeeModal{{ $event->id }}" tabindex="-1" aria-labelledby="createFeeModalLabel{{ $event->id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="{{ route('admin.fees.store') }}" method="POST">
+            @csrf
+            <input type="hidden" name="event_id" value="{{ $event->id }}">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createFeeModalLabel{{ $event->id }}">Create Fee for {{ $event->name }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="fee_name_{{ $event->id }}" class="form-label">Fee Name</label>
+                        <input type="text" class="form-control" id="fee_name_{{ $event->id }}" name="fee_type" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fee_amount_{{ $event->id }}" class="form-label">Amount</label>
+                        <input type="number" class="form-control" id="fee_amount_{{ $event->id }}" name="fee_amount" step="0.01" required>
+                    </div>
+                    <input type="hidden" name="event_id" value="{{ $event->id }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create Fee</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 
 
+<!-- Category Modal -->
+<div class="modal fade" id="createCategoryModal{{ $event->id }}" tabindex="-1" aria-labelledby="createCategoryModalLabel{{ $event->id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="{{ route('admin.categories.store') }}" method="POST">
+            @csrf
+            <input type="hidden" name="event_id" value="{{ $event->id }}">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createCategoryModalLabel{{ $event->id }}">Create Category for {{ $event->name }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="category_name_{{ $event->id }}" class="form-label">Category Name</label>
+                        <input type="text" class="form-control" id="category_name_{{ $event->id }}" name="category_name" required>
+                    </div>
+                    <input type="hidden" name="event_id" value="{{ $event->id }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create Category</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 
 @endsection

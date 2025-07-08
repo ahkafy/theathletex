@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('participants', function (Blueprint $table) {
             $table->id()->startingValue(251001); // Starting ID from 251001
             $table->unsignedBigInteger('event_id');
+            $table->string('category');
             $table->string('reg_type');
             $table->string('fee');
             $table->string('name');

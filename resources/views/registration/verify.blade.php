@@ -3,17 +3,17 @@
 @section('content')
 
 <!-- Main Content -->
-<main class="container col-md-6 col-lg-5">
+<main class="container">
   <!-- Open Events Section -->
 
-<div class="otp-container d-flex flex-column justify-content-center align-items-center">
+<div class="row">
   <!-- Instruction Message -->
-    <div class="row">
-        <div class="col-12 col-lg-6 col-md-6 mb-3 px-3 mt-5">
+    <div class="col-12 col-lg-6 col-md-6 mb-3 px-3 mt-5" style="border-right: 1px solid #e0e0e0;">
+            <h2 class="fw-semibold fs-2">{{ $event->name }}</h2>
             {!! $event->description !!}
         </div>
 
-        <div class="col-12 col-lg-6 col-md-6">
+        <div class="col-12 col-lg-6 col-md-6" style="padding-left: 2rem; padding-right: 2rem;">
 
             <div class="text-center mt-5 mb-3 px-3">
                 <h2 class="fw-semibold fs-2 ">Please Verify OTP</h2>

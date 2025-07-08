@@ -42,6 +42,20 @@
             </div>
 
             <div class="mb-3">
+                <label for="category" class="form-label">Category*</label>
+                <select class="form-select @error('category') is-invalid @enderror" id="category" name="category" required>
+                    <option selected disabled>Select Category</option>
+                    @foreach($event->categories as $category)
+                        <option value="{{ $category->name }}" {{ old('category') == $category->name ? 'selected' : '' }}>{{ $category->name }}</option>
+                    @endforeach
+                </select>
+                @error('category')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+
+            <div class="mb-3">
                 <label for="name" class="form-label">Name (English)*</label>
                 <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" required value="{{ old('name') }}">
                 @error('name')

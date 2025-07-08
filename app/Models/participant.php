@@ -8,6 +8,7 @@ class Participant extends Model
 {
     protected $fillable = [
         'event_id',
+        'category',
         'reg_type',
         'fee',
         'name',

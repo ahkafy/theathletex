@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Event;
 use App\Models\EventFee;
+use App\Models\EventCategory;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -153,6 +154,24 @@ class EventController extends Controller
         } else {
             return redirect()->back()->with('error', 'Failed to store fees. Please try again.');
         }
+    }
+
+    public function storeCategories(Request $request)
+    {
+       //store
+        $request->validate([
+            'event_id' => 'required|exists:events,id',
+            'category_name' => 'required|string|max:255',
+        ]);
+
+        // Create a new category for the event
+        $category = new EventCategory();
+        $category->event_id = $request->input('event_id');
+        $category->name = $request->input('category_name');
+        $category->save();
+
+        // Redirect back with success message
+        return redirect()->route('admin.events.index')->with('success', 'Category created successfully.');
     }
 
 
