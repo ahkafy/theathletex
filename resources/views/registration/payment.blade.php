@@ -6,6 +6,7 @@
     <table class="table table-bordered">
         <thead>
             <tr>
+                <th>Trx ID</th>
                 <th>User Name</th>
                 <th>Email</th>
                 <th>Phone</th>
@@ -18,6 +19,7 @@
         </thead>
         <tbody>
             <tr>
+                <td><b>{{ $transaction->id }}</b></td>
                 <td>{{ $transaction->participant->name }}</td>
                 <td>{{ $transaction->participant->email }}</td>
                 <td>{{ $transaction->participant->phone }}</td>
