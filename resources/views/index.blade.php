@@ -78,7 +78,7 @@
     <div class="d-flex align-items-center justify-content-between">
         <h2 class="mb-4 fw-bold">Open Events</h2>
         <div>
-            <a class=" px-4 py-1 rounded-4 text-decoration-none fw-medium global_button-outline" href="{{ url('events.html') }}">See All</a>
+            <a class="px-4 py-1 rounded-4 text-decoration-none fw-medium global_button-outline" href="{{ url('events.html') }}">See All</a>
         </div>
     </div>
 
@@ -88,9 +88,9 @@
         @else
             @foreach ($events as $event)
                 <div class="card rounded-1 col-12 col-md-4 col-lg-3 mb-4 mx-2">
-                    <a href="{{ url('details.html') }}" class="card-title d-block nav-link p-3 fw-bold">{{ $event->name }}</a>
-                    <a class="d-block px-3" href="{{ url('details.html') }}">
-                        <img src="{{ url($event->cover_photo) }}" class="card-img-top rounded-0 object-fit-cover" alt="Event 1 Image" style="height: 180px;">
+                    <a href="{{ url('#') }}" class="card-title d-block nav-link p-3 fw-bold">{{ $event->name }}</a>
+                    <a class="d-block px-3" href="{{ url('#') }}">
+                        <img src="{{ url($event->cover_photo) }}" class="card-img-top rounded-0 object-fit-cover" alt="Event 1 Image">
                     </a>
                     <div class="card-body p-0">
                         <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Status:</span> {{ $event->status }}</p>
@@ -113,8 +113,11 @@
             <a class="fw-medium text-decoration-none px-4 py-1 rounded-4 global_button-outline" href="{{ url('events.html') }}">See All</a>
         </div>
     </div>
-    <div class="owl-carousel event-carousel upcoming-events">
-        <div class="card rounded-1">
+    <div class="row">
+        @if(!false)
+            <h1 class="text-center my-5">No upcoming events now!</h1>
+        @else
+        <div class="card rounded-1 col-12 col-md-4 col-lg-3 mb-4 mx-2">
                 <a href="{{ url('details.html') }}" class="card-title d-block nav-link p-3 fw-bold">Berabo Tennis</a>
                 <a class="d-block px-3" href="{{ url('details.html') }}">
                         <img src="{{ url('images/card1.jpg') }}" class="card-img-top rounded-0 object-fit-cover" alt="Event 1 Image" style="height: 180px;">
@@ -124,56 +127,7 @@
                         <p class="mb-1 px-3 pb-3"><span class="fw-semibold">Date:</span> July 15, 2025</p>
                 </div>
         </div>
-        <div class="card rounded-1">
-                <a href="{{ url('details.html') }}" class="card-title d-block nav-link p-3 fw-bold">Berabo Tennis</a>
-                <a class="d-block px-3" href="{{ url('details.html') }}">
-                        <img src="{{ url('images/card2.jpg') }}" class="card-img-top rounded-0 object-fit-cover" alt="Event 1 Image" style="height: 180px;">
-                </a>
-                <div class="card-body p-0">
-                        <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Type:</span> Tennis</p>
-                        <p class="mb-1 px-3 pb-3"><span class="fw-semibold">Date:</span> July 15, 2025</p>
-                </div>
-        </div>
-        <div class="card rounded-1">
-                <a href="{{ url('details.html') }}" class="card-title d-block nav-link p-3 fw-bold">Berabo Tennis</a>
-                <a class="d-block px-3" href="{{ url('details.html') }}">
-                        <img src="{{ url('images/card3.jpg') }}" class="card-img-top rounded-0 object-fit-cover" alt="Event 1 Image" style="height: 180px;">
-                </a>
-                <div class="card-body p-0">
-                        <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Type:</span> Tennis</p>
-                        <p class="mb-1 px-3 pb-3"><span class="fw-semibold">Date:</span> July 15, 2025</p>
-                </div>
-        </div>
-        <div class="card rounded-1">
-                <a href="{{ url('details.html') }}" class="card-title d-block nav-link p-3 fw-bold">Berabo Tennis</a>
-                <a class="d-block px-3" href="{{ url('details.html') }}">
-                        <img src="{{ url('images/card4.jpg') }}" class="card-img-top rounded-0 object-fit-cover" alt="Event 1 Image" style="height: 180px;">
-                </a>
-                <div class="card-body p-0">
-                        <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Type:</span> Tennis</p>
-                        <p class="mb-1 px-3 pb-3"><span class="fw-semibold">Date:</span> July 15, 2025</p>
-                </div>
-        </div>
-        <div class="card rounded-1">
-                <a href="{{ url('details.html') }}" class="card-title d-block nav-link p-3 fw-bold">Berabo Tennis</a>
-                <a class="d-block px-3" href="{{ url('details.html') }}">
-                        <img src="{{ url('images/card5.jpg') }}" class="card-img-top rounded-0 object-fit-cover" alt="Event 1 Image" style="height: 180px;">
-                </a>
-                <div class="card-body p-0">
-                        <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Type:</span> Tennis</p>
-                        <p class="mb-1 px-3 pb-3"><span class="fw-semibold">Date:</span> July 15, 2025</p>
-                </div>
-        </div>
-        <div class="card rounded-1">
-                <a href="{{ url('details.html') }}" class="card-title d-block nav-link p-3 fw-bold">Berabo Tennis</a>
-                <a class="d-block px-3" href="{{ url('details.html') }}">
-                        <img src="{{ url('images/card1.jpg') }}" class="card-img-top rounded-0 object-fit-cover" alt="Event 1 Image" style="height: 180px;">
-                </a>
-                <div class="card-body p-0">
-                        <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Type:</span> Tennis</p>
-                        <p class="mb-1 px-3 pb-3"><span class="fw-semibold">Date:</span> July 15, 2025</p>
-                </div>
-        </div>
+        @endif
     </div>
 </section>
 <!-- ended Events Section -->
@@ -184,73 +138,22 @@
             <a class="text-decoration-none fw-medium px-4 py-1 rounded-4 global_button-outline" href="{{ url('events.html') }}">See All</a>
         </div>
     </div>
-    <div class="owl-carousel event-carousel end-events">
-<div class="card rounded-1">
-                <a href="{{ url('details.html') }}" class="card-title d-block nav-link p-3 fw-bold">Berabo Tennis</a>
-                <a class="d-block px-3" href="{{ url('details.html') }}">
-                        <img src="{{ url('images/card1.jpg') }}" class="card-img-top rounded-0 object-fit-cover" alt="Event 1 Image" style="height: 180px;">
-                </a>
-                <div class="card-body p-0">
-                        <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Type:</span> Tennis</p>
-                        <p class="mb-1 px-3 pb-3"><span class="fw-semibold">Date:</span> July 15, 2025</p>
-                        <a href="{{ url('RegistrationNumber.html') }}" class="btn btn- global_button  mt-2 d-block rounded-0  rounded-bottom-1 text-uppercase">see result</a>
-                </div>
+    <div class="row">
+        @if (!false)
+            <h1 class="text-center my-5">No past events now!</h1>
+        @else
+        <div class="card rounded-1 col-12 col-md-4 col-lg-3 mb-4 mx-2">
+            <a href="{{ url('details.html') }}" class="card-title d-block nav-link p-3 fw-bold">Berabo Tennis</a>
+            <a class="d-block px-3" href="{{ url('details.html') }}">
+                    <img src="{{ url('images/card1.jpg') }}" class="card-img-top rounded-0 object-fit-cover" alt="Event 1 Image" style="height: 180px;">
+            </a>
+            <div class="card-body p-0">
+                    <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Type:</span> Tennis</p>
+                    <p class="mb-1 px-3 pb-3"><span class="fw-semibold">Date:</span> July 15, 2025</p>
+                    <a href="{{ url('RegistrationNumber.html') }}" class="btn btn- global_button  mt-2 d-block rounded-0  rounded-bottom-1 text-uppercase">see result</a>
+            </div>
         </div>
-        <div class="card rounded-1">
-                <a href="{{ url('details.html') }}" class="card-title d-block nav-link p-3 fw-bold">Berabo Tennis</a>
-                <a class="d-block px-3" href="{{ url('details.html') }}">
-                        <img src="{{ url('images/card2.jpg') }}" class="card-img-top rounded-0 object-fit-cover" alt="Event 1 Image" style="height: 180px;">
-                </a>
-                <div class="card-body p-0">
-                        <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Type:</span> Tennis</p>
-                        <p class="mb-1 px-3 pb-3"><span class="fw-semibold">Date:</span> July 15, 2025</p>
-                        <a href="" class="btn btn- global_button  mt-2 d-block rounded-0  rounded-bottom-1 text-uppercase">see result</a>
-                </div>
-        </div>
-        <div class="card rounded-1">
-                <a href="{{ url('details.html') }}" class="card-title d-block nav-link p-3 fw-bold">Berabo Tennis</a>
-                <a class="d-block px-3" href="{{ url('details.html') }}">
-                        <img src="{{ url('images/card3.jpg') }}" class="card-img-top rounded-0 object-fit-cover" alt="Event 1 Image" style="height: 180px;">
-                </a>
-                <div class="card-body p-0">
-                        <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Type:</span> Tennis</p>
-                        <p class="mb-1 px-3 pb-3"><span class="fw-semibold">Date:</span> July 15, 2025</p>
-                        <a href="" class="btn btn- global_button  mt-2 d-block rounded-0  rounded-bottom-1 text-uppercase">see result</a>
-                </div>
-        </div>
-        <div class="card rounded-1">
-                <a href="{{ url('details.html') }}" class="card-title d-block nav-link p-3 fw-bold">Berabo Tennis</a>
-                <a class="d-block px-3" href="{{ url('details.html') }}">
-                        <img src="{{ url('images/card4.jpg') }}" class="card-img-top rounded-0 object-fit-cover" alt="Event 1 Image" style="height: 180px;">
-                </a>
-                <div class="card-body p-0">
-                        <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Type:</span> Tennis</p>
-                        <p class="mb-1 px-3 pb-3"><span class="fw-semibold">Date:</span> July 15, 2025</p>
-                        <a href="" class="btn btn- global_button  mt-2 d-block rounded-0  rounded-bottom-1 text-uppercase">see result</a>
-                </div>
-        </div>
-        <div class="card rounded-1">
-                <a href="{{ url('details.html') }}" class="card-title d-block nav-link p-3 fw-bold">Berabo Tennis</a>
-                <a class="d-block px-3" href="{{ url('details.html') }}">
-                        <img src="{{ url('images/card5.jpg') }}" class="card-img-top rounded-0 object-fit-cover" alt="Event 1 Image" style="height: 180px;">
-                </a>
-                <div class="card-body p-0">
-                        <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Type:</span> Tennis</p>
-                        <p class="mb-1 px-3 pb-3"><span class="fw-semibold">Date:</span> July 15, 2025</p>
-                        <a href="" class="btn btn- global_button  mt-2 d-block rounded-0  rounded-bottom-1 text-uppercase">see result</a>
-                </div>
-        </div>
-        <div class="card rounded-1">
-                <a href="{{ url('details.html') }}" class="card-title d-block nav-link p-3 fw-bold">Berabo Tennis</a>
-                <a class="d-block px-3" href="{{ url('details.html') }}">
-                        <img src="{{ url('images/card1.jpg') }}" class="card-img-top rounded-0 object-fit-cover" alt="Event 1 Image" style="height: 180px;">
-                </a>
-                <div class="card-body p-0">
-                        <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Type:</span> Tennis</p>
-                        <p class="mb-1 px-3 pb-3"><span class="fw-semibold">Date:</span> July 15, 2025</p>
-                        <a href="" class="btn btn- global_button  mt-2 d-block rounded-0  rounded-bottom-1 text-uppercase">see result</a>
-                </div>
-        </div>
+        @endif
     </div>
 </section>
 

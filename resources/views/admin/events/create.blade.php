@@ -2,6 +2,11 @@
 
 @section('content')
 
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1 class="text-center">Create New Event</h1>
+    </div>
+</div>
 
 <div class="row justify-content-center">
     <div class="col-md-6">

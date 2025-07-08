@@ -180,11 +180,7 @@
             <div class="mb-3">
                 <label class="form-label mt-3">Select Payment Method:</label><br>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input @error('payment_method') is-invalid @enderror" type="radio" name="payment_method" id="cod" value="cod" {{ old('payment_method', 'cod') == 'cod' ? 'checked' : '' }}>
-                    <label class="form-check-label" for="cod">Cash On Delivery</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input @error('payment_method') is-invalid @enderror" type="radio" name="payment_method" id="online" value="online" {{ old('payment_method') == 'online' ? 'checked' : '' }}>
+                    <input class="form-check-input @error('payment_method') is-invalid @enderror" type="radio" name="payment_method" id="online" value="online" {{ old('payment_method') == 'online' ? 'checked' : '' }} checked>
                     <label class="form-check-label" for="online">Online Payment</label>
                 </div>
                 @error('payment_method')

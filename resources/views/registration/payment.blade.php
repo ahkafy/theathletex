@@ -27,8 +27,8 @@
                 <td>{{ $transaction->status }} </td>
 
                 <td>
-                    @if($transaction->status !== 'complete')
-                        <form action="{{ route('payment.pay') }}" method="POST">
+                    @if($transaction->status !== 'Complete')
+                        <form action="{{ url('pay') }}" method="POST">
                             @csrf
                             <input type="hidden" name="transaction_id" value="{{ $transaction->id }}">
                             <input type="hidden" name="name" value="{{ $transaction->participant->name }}">
@@ -37,6 +37,8 @@
                             <input type="hidden" name="address" value="{{ $transaction->participant->address }}">
                             <button type="submit" class="btn btn-primary">Pay Now</button>
                         </form>
+                    @else
+                        <span class="text-success">Payment Successful</span>
                     @endif
                 </td>
             </tr>
