@@ -91,9 +91,7 @@ class RegistrationController extends Controller
             'dob' => 'required|date',
             'nationality' => 'required|string|max:100',
             'tshirt_size' => 'required|string|max:10',
-            'kit_option' => 'required|string|max:50',
             'terms_agreed' => 'required|accepted',
-            'payment_method' => 'required|string|max:50',
         ]);
 
         $event = Event::where('id', $eventID)->with('fees')->first();

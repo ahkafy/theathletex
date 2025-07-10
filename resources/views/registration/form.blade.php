@@ -166,41 +166,19 @@
                     <div class="invalid-feedback d-block">{{ $message }}</div>
                 @enderror
             </div>
-            <div class="mb-3">
-                <label class="form-label">Kit Distribution Option</label><br>
-                <div class="form-check">
-                    <input class="form-check-input @error('kit_option') is-invalid @enderror" type="radio" name="kit_option" id="pickup" value="pickup" {{ old('kit_option', 'pickup') == 'pickup' ? 'checked' : '' }}>
-                    <label class="form-check-label" for="pickup">Physical Kit Collection (from Distribution Point)</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input @error('kit_option') is-invalid @enderror" type="radio" name="kit_option" id="courier" value="courier" {{ old('kit_option') == 'courier' ? 'checked' : '' }}>
-                    <label class="form-check-label" for="courier">By Courier</label>
-                </div>
-                @error('kit_option')
-                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                @enderror
-            </div>
+
             <div class="mb-3">
                 <div class="form-check">
                     <input class="form-check-input @error('terms_agreed') is-invalid @enderror" type="checkbox" id="agree" name="terms_agreed" {{ old('terms_agreed') ? 'checked' : '' }}>
                     <label class="form-check-label" for="agree">
-                    I have read and agree to the <a href="#">Terms & Conditions</a>, <a href="#">Privacy Policy</a>, and <a href="#">Refund Policy</a>
+                   All payments are final. No refunds or transfers allowed. By registering, I confirm that I have read and agreed to our terms, conditions, and return policy of The Athlete X Limited.
                     </label>
                 </div>
                 @error('terms_agreed')
                     <div class="invalid-feedback d-block">{{ $message }}</div>
                 @enderror
             </div>
-            <div class="mb-3">
-                <label class="form-label mt-3">Select Payment Method:</label><br>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input @error('payment_method') is-invalid @enderror" type="radio" name="payment_method" id="online" value="online" {{ old('payment_method') == 'online' ? 'checked' : '' }} checked>
-                    <label class="form-check-label" for="online">Online Payment</label>
-                </div>
-                @error('payment_method')
-                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                @enderror
-            </div>
+
             <button type="submit" class="btn w-100" style="background-color: #6f42c1; color: #fff;">Send</button>
         </form>
     </div>
