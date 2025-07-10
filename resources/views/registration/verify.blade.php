@@ -6,14 +6,12 @@
 <main class="container">
   <!-- Open Events Section -->
 
-<div class="row">
-  <!-- Instruction Message -->
-    <div class="col-12 col-lg-6 col-md-6 mb-3 px-3 mt-5" style="border-right: 1px solid #e0e0e0;">
-            <h2 class="fw-semibold fs-2">{{ $event->name }}</h2>
-            {!! $event->description !!}
-        </div>
+<div class="row text-center justify-content-center align-items-center" style="min-height: 50vh;">
 
-        <div class="col-12 col-lg-6 col-md-6" style="padding-left: 2rem; padding-right: 2rem;">
+
+  <!-- Instruction Message -->
+
+        <div class="col-12 col-md-6" style="padding-left: 2rem; padding-right: 2rem;">
 
             <div class="text-center mt-5 mb-3 px-3">
                 <h2 class="fw-semibold fs-2 ">Please Verify OTP</h2>

@@ -8,6 +8,7 @@
 
     <div class="row">
         <div class="col-12 col-lg-6 col-md-6 mb-3 px-3 mt-5" style="border-right: 1px solid #e0e0e0;">
+            <img src="{{ asset($event->cover_photo) }}" alt="">
             <h2 class="fw-semibold fs-2">{{ $event->name }}</h2>
             {!! $event->description !!}
         </div>
