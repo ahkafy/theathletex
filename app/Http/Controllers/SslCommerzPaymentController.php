@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Library\SslCommerz\SslCommerzNotification;
 use App\Models\Transaction;
 use App\Http\Controllers\RegistrationController;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PaymentConfirmation;
 
 class SslCommerzPaymentController extends Controller
 {
@@ -27,7 +29,7 @@ class SslCommerzPaymentController extends Controller
         # Let's say, your oder transaction informations are saving in a table called "orders"
         # In "orders" table, order unique identity is "transaction_id". "status" field contain status of the transaction, "amount" is the order amount to be paid and "currency" is for storing Site Currency which will be checked with paid currency.
 
-        $transaction = Transaction::where('id', $request->transaction_id)->with('participant')->first();
+        $transaction = Transaction::where('id', $request->transaction_id)->with(['participant', 'event'])->first();
 
         $post_data = array();
         $post_data['total_amount'] = $transaction->amount; # You cant not pay less than 10
@@ -63,7 +65,7 @@ class SslCommerzPaymentController extends Controller
         echo "Transaction is Successful";
         $tran_id = $request->input('tran_id');
 
-        $trxInfo = Transaction::where('id', $tran_id)->with('participant')->first();
+        $trxInfo = Transaction::where('id', $tran_id)->with(['participant', 'event'])->first();
 
         $participantPhone = $trxInfo->participant->phone;
 
@@ -80,6 +82,14 @@ class SslCommerzPaymentController extends Controller
             // Send SMS to participant
             $msg = "Dear " . $trxInfo->participant->name . ", your payment of " . $trxInfo->amount . " " . $trxInfo->currency . " for the event has been successfully completed. Transaction ID: " . $tran_id . ". Thank you for your participation!";
             $this->smsSend($participantPhone, $msg);
+
+            // Send confirmation email to participant
+            try {
+                Mail::to($trxInfo->participant->email)->send(new PaymentConfirmation($trxInfo));
+            } catch (\Exception $e) {
+                // Log the error but don't fail the transaction
+                \Log::error('Failed to send payment confirmation email: ' . $e->getMessage());
+            }
 
             echo "Transaction is successfully Completed";
             return redirect()->route('payment.init', ['trxID' => $tran_id])
