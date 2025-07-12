@@ -62,12 +62,20 @@ class SslCommerzPaymentController extends Controller
 
     public function success(Request $request)
     {
-        echo "Transaction is Successful";
+        //echo "Transaction is Successful";
         $tran_id = $request->input('tran_id');
+        $amount = $request->input('amount');
+        $currency = $request->input('currency');
 
+        $sslc = new SslCommerzNotification();
+        
         $trxInfo = Transaction::where('id', $tran_id)->with(['participant', 'event'])->first();
 
         $participantPhone = $trxInfo->participant->phone;
+        
+        
+        $validation = $sslc->orderValidate($request->all(), $tran_id, $amount, $currency);
+
 
         $check = Transaction::where('id', $tran_id)
             ->update([
@@ -91,7 +99,8 @@ class SslCommerzPaymentController extends Controller
                 \Log::error('Failed to send payment confirmation email: ' . $e->getMessage());
             }
 
-            echo "Transaction is successfully Completed";
+           // echo "Transaction is successfully Completed";
+           
             return redirect()->route('payment.init', ['trxID' => $tran_id])
                 ->with('success', 'Transaction is successfully Completed');
         } else {
