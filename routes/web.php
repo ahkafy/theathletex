@@ -18,7 +18,7 @@ Route::get('/', [HomeController::class, 'index'])->name('index');
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 Route::get('/register/{eventID}/one', [RegistrationController::class, 'otpForm'])->name('otp.form');
-Route::post('/register/{eventID}/send', [RegistrationController::class, 'sendOTP'])->name('otp.send');
+Route::get('/register/{eventID}/send', [RegistrationController::class, 'sendOTP'])->name('otp.send');
 Route::post('/register/{eventID}/verify', [RegistrationController::class, 'verifyOTP'])->name('otp.verify');
 Route::get('/register/{eventID}/two', [RegistrationController::class, 'registrationForm'])->name('register.create');
 Route::post('/register/{eventID}/store', [RegistrationController::class, 'registerParticipant'])->name('register.store');

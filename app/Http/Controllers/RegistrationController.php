@@ -54,9 +54,8 @@ class RegistrationController extends Controller
             return redirect()->route('register.create', ['eventID' => $eventID])
                 ->with('success', 'OTP verified successfully. Please proceed to registration.');
         } else {
-            return response()->back()
-                ->withInput()
-                ->withErrors(['otp' => 'Invalid OTP. Please try again.']);
+            return redirect()->back()
+                ->with('error', 'Invalid OTP. Please try again.');
         }
     }
 

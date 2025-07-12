@@ -24,7 +24,7 @@
 
             <div class="card w-100 mb-4">
                 <div class="card-body">
-                    <form method="POST" action="{{ route('otp.send', $event->id) }}">
+                    <form method="GET" action="{{ route('otp.send', $event->id) }}">
                         @csrf
                         <div class="mb-3">
                             <label for="phone" class="form-label">Mobile Number</label>
