@@ -177,6 +177,9 @@ class EventController extends Controller
 
     public function show(Event $event)
     {
+        // Load relationships for better performance
+        $event->load(['fees', 'categories', 'participants', 'transactions']);
+
         // Show the details of a specific event
         return view('admin.events.show', compact('event'));
     }
@@ -201,28 +204,75 @@ class EventController extends Controller
             'status' => 'string|in:scheduled,open,closed,complete',
         ]);
 
-        // Update the event with the validated data
-        $event->update($request->all());
+        // Generate a slug from the event name if name changed
+        if ($event->name !== $request->input('name')) {
+            $baseSlug = Str::slug($request->input('name'), '-');
+            $slug = $baseSlug;
+            $count = 1;
+            while (Event::where('slug', $slug)->where('id', '!=', $event->id)->exists()) {
+                $slug = $baseSlug . '-' . $count++;
+            }
+            $event->slug = $slug;
+        }
+
+        // Process description from summernote formatting
+        $description = $request->input('description');
+        if ($description) {
+            // Allow Summernote HTML but sanitize
+            $allowed_tags = '<p><br><b><i><u><strong><em><ul><ol><li><a><img><h1><h2><h3><h4><h5><h6><blockquote>';
+            $description = strip_tags($description, $allowed_tags);
+
+            // Process embedded images (base64) and save them as files
+            if (preg_match_all('/<img[^>]+src="data:image\/([^;]+);base64,([^"]+)"[^>]*>/i', $description, $matches, PREG_SET_ORDER)) {
+                $uploadDir = public_path('uploads/events');
+                if (!file_exists($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+                foreach ($matches as $img) {
+                    $imageData = base64_decode($img[2]);
+                    $extension = $img[1];
+                    $filename = 'uploads/events/' . uniqid() . '.' . $extension;
+                    file_put_contents(public_path($filename), $imageData);
+                    // Replace base64 src with file path
+                    $description = str_replace($img[0], '<img src="' . asset($filename) . '" />', $description);
+                }
+            }
+        }
 
         // Handle cover photo upload if provided
         if ($request->hasFile('cover_photo')) {
+            // Delete old cover photo if exists
+            if ($event->cover_photo && file_exists(public_path($event->cover_photo))) {
+                unlink(public_path($event->cover_photo));
+            }
+
             $file = $request->file('cover_photo');
             $filename = 'event_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
             $path = $file->storeAs('events', $filename, 'public');
             $event->cover_photo = 'storage/' . $path;
         }
 
-        // Save the updated event
+        // Update the event with the validated data
+        $event->update([
+            'name' => $request->input('name'),
+            'description' => $description,
+            'start_time' => $request->input('start_time'),
+            'end_time' => $request->input('end_time'),
+            'capacity' => $request->input('capacity'),
+            'venue' => $request->input('venue'),
+            'status' => $request->input('status'),
+        ]);
+
+        // Save the updated event (this will save the cover_photo if it was updated)
         $event->save();
 
         // Redirect to events index with success message
         return redirect()->route('admin.events.index')->with('success', 'Event updated successfully.');
     }
 
-    public function destroy($event)
+    public function destroy(Event $event)
     {
         // Delete the specified event
-        $event = Event::findOrFail($event);
         $event->delete();
 
         // Redirect to events index with success message

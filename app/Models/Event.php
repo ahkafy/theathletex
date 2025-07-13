@@ -34,4 +34,16 @@ class Event extends Model
         // Define the relationship with EventCategory model for each event
         return $this->hasMany(EventCategory::class);
     }
+
+    public function participants()
+    {
+        // Define the relationship with Participant model for each event
+        return $this->hasMany(Participant::class);
+    }
+
+    public function transactions()
+    {
+        // Define the relationship with Transaction model for each event
+        return $this->hasMany(Transaction::class);
+    }
 }
