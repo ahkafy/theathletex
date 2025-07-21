@@ -14,7 +14,7 @@
 <!-- Header with Navbar and Offcanvas -->
 <header class="bg-dark text-white">
     <nav class="navbar navbar-dark navbar-expand-lg container">
-    <a class="navbar-brand" href="{{ url('index.html') }}"><img class="logo" src="{{ url('images/logo-removebg-preview.png') }}" alt=""></a>
+    <a class="navbar-brand" href="{{ url('/') }}"><img class="logo" src="{{ url('images/logo-removebg-preview.png') }}" alt=""></a>
     <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
         <span class="navbar-toggler-icon"></span>
     </button>

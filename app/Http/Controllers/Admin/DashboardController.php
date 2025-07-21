@@ -70,7 +70,7 @@ class DashboardController extends Controller
             }
         }
 
-        $participants = $participantsQuery->paginate(20);
+        $participants = $participantsQuery->paginate(20)->appends(request()->query());
 
         // Calculate statistics (filtered by event and payment status if selected)
         $statsQuery = Participant::query();
@@ -121,7 +121,7 @@ class DashboardController extends Controller
             }
         }
 
-        $transactions = $transactionsQuery->paginate(20);
+        $transactions = $transactionsQuery->paginate(20)->appends(request()->query());
 
         // Calculate statistics (filtered by event and payment status if selected)
         $revenueQuery = Transaction::whereIn('status', ['complete', 'Complete']);

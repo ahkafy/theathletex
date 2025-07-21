@@ -45,6 +45,82 @@
                 height: auto;
             }
         }
+
+        /* Fix pagination arrow buttons */
+        .pagination {
+            --bs-pagination-padding-x: 0.75rem;
+            --bs-pagination-padding-y: 0.375rem;
+            --bs-pagination-font-size: 0.875rem;
+            --bs-pagination-color: #6c757d;
+            --bs-pagination-bg: #fff;
+            --bs-pagination-border-width: 1px;
+            --bs-pagination-border-color: #dee2e6;
+            --bs-pagination-border-radius: 0.375rem;
+            --bs-pagination-hover-color: #0056b3;
+            --bs-pagination-hover-bg: #e9ecef;
+            --bs-pagination-hover-border-color: #dee2e6;
+            --bs-pagination-focus-color: #0056b3;
+            --bs-pagination-focus-bg: #e9ecef;
+            --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+            --bs-pagination-active-color: #fff;
+            --bs-pagination-active-bg: #0d6efd;
+            --bs-pagination-active-border-color: #0d6efd;
+            --bs-pagination-disabled-color: #6c757d;
+            --bs-pagination-disabled-bg: #fff;
+            --bs-pagination-disabled-border-color: #dee2e6;
+        }
+
+        .pagination .page-link {
+            position: relative;
+            display: block;
+            padding: var(--bs-pagination-padding-y) var(--bs-pagination-padding-x);
+            font-size: var(--bs-pagination-font-size);
+            color: var(--bs-pagination-color);
+            text-decoration: none;
+            background-color: var(--bs-pagination-bg);
+            border: var(--bs-pagination-border-width) solid var(--bs-pagination-border-color);
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .pagination .page-item.active .page-link {
+            z-index: 3;
+            color: var(--bs-pagination-active-color);
+            background-color: var(--bs-pagination-active-bg);
+            border-color: var(--bs-pagination-active-border-color);
+        }
+
+        .pagination .page-item .page-link:hover {
+            z-index: 2;
+            color: var(--bs-pagination-hover-color);
+            background-color: var(--bs-pagination-hover-bg);
+            border-color: var(--bs-pagination-hover-border-color);
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: var(--bs-pagination-disabled-color);
+            pointer-events: none;
+            background-color: var(--bs-pagination-disabled-bg);
+            border-color: var(--bs-pagination-disabled-border-color);
+        }
+
+        /* Fix arrow button sizing specifically */
+        .pagination .page-link[aria-label="pagination.previous"],
+        .pagination .page-link[aria-label="pagination.next"] {
+            padding: 0.375rem 0.75rem;
+            line-height: 1.5;
+        }
+
+        /* Font Awesome icons in pagination */
+        .pagination .page-link i {
+            font-size: 0.75rem;
+            vertical-align: middle;
+        }
+
+        /* Ensure pagination is responsive and well-spaced */
+        .pagination .page-item .page-link {
+            min-width: 40px;
+            text-align: center;
+        }
     </style>
     @stack('styles')
 </head>
