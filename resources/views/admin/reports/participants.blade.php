@@ -1,62 +1,234 @@
 @extends('admin.layouts.admin')
 
 @section('content')
-<div class="container mt-4">
-    <h2>Participants List</h2>
-    <div class="card">
-        <div class="card-body">
-            <table class="table table-striped table-hover table-bordered">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Name &amp; Contact</th>
-                        <th>Event &amp; Reg Type</th>
-                        <th>Address</th>
-                        <th>Personal Info</th>
-                        <th>T-shirt &amp; Kit</th>
-                        <th>Payment</th>
-                        <th>Registered At</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($participants as $index => $participant)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>
-                                <strong>{{ $participant->name }}</strong><br>
-                                <span>Email: {{ $participant->email }}</span><br>
-                                <span>Phone: {{ $participant->phone }}</span><br>
-                                <span>Emergency: {{ $participant->emergency_phone }}</span>
-                            </td>
-                            <td>
-                                <span>Event ID: {{ $participant->event_id }}</span><br>
-                                <span>Type: {{ $participant->reg_type }}</span>
-                            </td>
-                            <td>
-                                <span>{{ $participant->address }}</span><br>
-                                <span>{{ $participant->thana }}, {{ $participant->district }}</span>
-                            </td>
-                            <td>
-                                <span>Gender: {{ ucfirst($participant->gender) }}</span><br>
-                                <span>DOB: {{ \Carbon\Carbon::parse($participant->dob)->format('d M Y') }}</span><br>
-                                <span>Nationality: {{ $participant->nationality }}</span>
-                            </td>
-                            <td>
-                                <span>Size: {{ $participant->tshirt_size }}</span><br>
-                                <span>Kit: {{ ucfirst($participant->kit_option) }}</span>
-                            </td>
-                            <td>
-                                <span>Fee: {{ $participant->fee }}</span><br>
-                                <span>Method: {{ strtoupper($participant->payment_method) }}</span><br>
-                                <span>Status: {{ ucfirst($participant->payment_status) }}</span>
-                            </td>
-                            <td>
-                                {{ \Carbon\Carbon::parse($participant->created_at)->format('d M Y H:i') }}
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1>Participants Report</h1>
+                    <p class="text-muted">Comprehensive participant management and analysis
+                        @if($selectedEvent)
+                            - Filtered by: <strong>{{ $selectedEvent->name }}</strong>
+                        @endif
+                    </p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{{ route('admin.export.participants', request()->all()) }}" class="btn btn-success">
+                        <i class="fas fa-download me-2"></i>Export CSV
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- Event Filter -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="GET" action="{{ route('admin.reports.participants') }}" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="event_id" class="form-label">Filter by Event</label>
+                            <select name="event_id" id="event_id" class="form-select">
+                                <option value="">All Events</option>
+                                @foreach($events as $event)
+                                    <option value="{{ $event->id }}" {{ request('event_id') == $event->id ? 'selected' : '' }}>
+                                        {{ $event->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-filter me-1"></i>Apply Filter
+                                </button>
+                            </div>
+                        </div>
+                        @if(request('event_id'))
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <div>
+                                <a href="{{ route('admin.reports.participants') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-1"></i>Clear Filter
+                                </a>
+                            </div>
+                        </div>
+                        @endif
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="card-title">{{ $stats['total_participants'] }}</h4>
+                            <p class="card-text">Total Participants</p>
+                        </div>
+                        <i class="fas fa-users fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="card-title">{{ $stats['paid_participants'] }}</h4>
+                            <p class="card-text">Paid Participants</p>
+                        </div>
+                        <i class="fas fa-check-circle fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="card-title">{{ $stats['today_registrations'] }}</h4>
+                            <p class="card-text">Today's Registrations</p>
+                        </div>
+                        <i class="fas fa-calendar-day fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="card-title">{{ $stats['gender_data_available'] }}</h4>
+                            <p class="card-text">Gender Data Available</p>
+                        </div>
+                        <i class="fas fa-venus-mars fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Participants Table -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">All Participants</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Participant Info</th>
+                            <th>Event</th>
+                            <th>Personal Details</th>
+                            <th>Address</th>
+                            <th>Registration</th>
+                            <th>Payment Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($participants as $index => $participant)
+                        <tr>
+                            <td>{{ ($participants->currentPage() - 1) * $participants->perPage() + $index + 1 }}</td>
+                            <td>
+                                <div>
+                                    <strong>{{ $participant->name }}</strong><br>
+                                    <small class="text-muted">
+                                        <i class="fas fa-envelope me-1"></i>{{ $participant->email }}<br>
+                                        <i class="fas fa-phone me-1"></i>{{ $participant->phone }}
+                                    </small>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <strong>{{ $participant->event->name ?? 'Event not found' }}</strong><br>
+                                    <small class="text-muted">
+                                        Category: {{ $participant->category ?? 'N/A' }}<br>
+                                        Type: {{ ucfirst($participant->reg_type ?? 'N/A') }}
+                                    </small>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <small>
+                                        <strong>Gender:</strong> {{ ucfirst($participant->gender ?? 'N/A') }}<br>
+                                        <strong>DOB:</strong> {{ $participant->dob ? \Carbon\Carbon::parse($participant->dob)->format('M d, Y') : 'N/A' }}<br>
+                                        <strong>T-Shirt:</strong> {{ $participant->tshirt_size ?? 'N/A' }}
+                                    </small>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <small>
+                                        {{ $participant->address }}<br>
+                                        {{ $participant->thana }}, {{ $participant->district }}
+                                    </small>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <small>
+                                        <strong>Date:</strong> {{ $participant->created_at->format('M d, Y') }}<br>
+                                        <strong>Time:</strong> {{ $participant->created_at->format('g:i A') }}<br>
+                                        <strong>Emergency:</strong> {{ $participant->emergency_phone ?? 'N/A' }}
+                                    </small>
+                                </div>
+                            </td>
+                            <td>
+                                @php
+                                    $hasCompletedTransaction = $participant->transactions->where('status', 'complete')->count() > 0;
+                                    $totalPaid = $participant->transactions->where('status', 'complete')->sum('amount');
+                                @endphp
+                                @if($hasCompletedTransaction)
+                                    <span class="badge bg-success">Paid</span><br>
+                                    <small>৳{{ number_format($totalPaid, 2) }}</small>
+                                @else
+                                    <span class="badge bg-warning">Pending</span><br>
+                                    <small>৳{{ number_format($participant->fee ?? 0, 2) }}</small>
+                                @endif
+                            </td>
+                            <td>
+                                <div class="btn-group-vertical" role="group">
+                                    @if($participant->email)
+                                    <a href="mailto:{{ $participant->email }}" class="btn btn-sm btn-outline-primary" title="Send Email">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
+                                    @endif
+                                    @if($participant->phone)
+                                    <a href="tel:{{ $participant->phone }}" class="btn btn-sm btn-outline-success" title="Call">
+                                        <i class="fas fa-phone"></i>
+                                    </a>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="8" class="text-center text-muted">No participants found</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center">
+                {{ $participants->links() }}
+            </div>
+        </div>
+    </div>
+</div>
 @endsection

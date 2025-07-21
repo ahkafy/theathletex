@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin Dashboard')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     @stack('styles')
     <style>
@@ -54,15 +55,73 @@
             <nav id="sidebarDrawer" class="col-md-2 sidebar py-4 d-md-block d-none position-fixed" tabindex="-1" style="transition: left 0.3s; left: 0;">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ route('admin.dashboard') }}">Dashboard</a>
+                        <a class="nav-link text-white" href="{{ route('admin.dashboard') }}">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ route('admin.participants') }}">Participants</a>
+                        <a class="nav-link text-white" href="{{ route('admin.events.index') }}">
+                            <i class="fas fa-calendar-alt me-2"></i>Events
+                        </a>
+                    </li>
+
+                    <!-- Reports Section -->
+                    <li class="nav-item mt-3">
+                        <h6 class="text-white-50 text-uppercase px-3 mb-2">Reports</h6>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ route('admin.events.index') }}">Events</a>
+                        <a class="nav-link text-white" href="{{ route('admin.reports.participants') }}">
+                            <i class="fas fa-users me-2"></i>Participants
+                        </a>
                     </li>
-                    <!-- Add more sidebar links as needed -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('admin.reports.transactions') }}">
+                            <i class="fas fa-credit-card me-2"></i>Transactions
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('admin.reports.events') }}">
+                            <i class="fas fa-chart-bar me-2"></i>Event Reports
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('admin.reports.revenue') }}">
+                            <i class="fas fa-dollar-sign me-2"></i>Revenue
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('admin.reports.analytics') }}">
+                            <i class="fas fa-chart-line me-2"></i>Analytics
+                        </a>
+                    </li>
+
+                    <!-- Export Section -->
+                    <li class="nav-item mt-3">
+                        <h6 class="text-white-50 text-uppercase px-3 mb-2">Export Data</h6>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('admin.export.participants') }}">
+                            <i class="fas fa-download me-2"></i>Export Participants
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('admin.export.transactions') }}">
+                            <i class="fas fa-file-csv me-2"></i>Export Transactions
+                        </a>
+                    </li>
+
+                    <!-- Settings Section -->
+                    <li class="nav-item mt-3">
+                        <h6 class="text-white-50 text-uppercase px-3 mb-2">Account</h6>
+                    </li>
+                    <li class="nav-item">
+                        <form action="{{ route('admin.logout') }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="nav-link text-white bg-transparent border-0 w-100 text-start">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </button>
+                        </form>
+                    </li>
                 </ul>
             </nav>
             <!-- Sidebar Toggle Button (Mobile) -->

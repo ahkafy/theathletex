@@ -14,8 +14,19 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::middleware('auth:admin')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-        Route::get('/participants', [DashboardController::class, 'participants'])->name('participants');
 
+        // Reports Routes
+        Route::get('/reports/participants', [DashboardController::class, 'participants'])->name('reports.participants');
+        Route::get('/reports/transactions', [DashboardController::class, 'transactions'])->name('reports.transactions');
+        Route::get('/reports/events', [DashboardController::class, 'events'])->name('reports.events');
+        Route::get('/reports/revenue', [DashboardController::class, 'revenue'])->name('reports.revenue');
+        Route::get('/reports/analytics', [DashboardController::class, 'analytics'])->name('reports.analytics');
+
+        // Export Routes
+        Route::get('/export/participants', [DashboardController::class, 'exportParticipants'])->name('export.participants');
+        Route::get('/export/transactions', [DashboardController::class, 'exportTransactions'])->name('export.transactions');
+
+        // Events Routes
         Route::get('/events', [EventController::class, 'index'])->name('events.index');
         Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
         Route::post('/events/store', [EventController::class, 'store'])->name('events.store');

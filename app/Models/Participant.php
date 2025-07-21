@@ -38,5 +38,10 @@ class Participant extends Model
         return $this->belongsTo(EventCategory::class, 'category', 'name');
     }
 
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
 
 }
