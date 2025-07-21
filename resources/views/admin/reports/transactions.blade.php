@@ -28,7 +28,7 @@
             <div class="card">
                 <div class="card-body">
                     <form method="GET" action="{{ route('admin.reports.transactions') }}" class="row g-3">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="event_id" class="form-label">Filter by Event</label>
                             <select name="event_id" id="event_id" class="form-select">
                                 <option value="">All Events</option>
@@ -39,6 +39,16 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="col-md-3">
+                            <label for="payment_status" class="form-label">Filter by Payment Status</label>
+                            <select name="payment_status" id="payment_status" class="form-select">
+                                <option value="">All Status</option>
+                                <option value="complete" {{ request('payment_status') == 'complete' ? 'selected' : '' }}>Complete</option>
+                                <option value="pending" {{ request('payment_status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                                <option value="failed" {{ request('payment_status') == 'failed' ? 'selected' : '' }}>Failed</option>
+                                <option value="cancelled" {{ request('payment_status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                            </select>
+                        </div>
                         <div class="col-md-2">
                             <label class="form-label">&nbsp;</label>
                             <div>
@@ -47,12 +57,12 @@
                                 </button>
                             </div>
                         </div>
-                        @if(request('event_id'))
+                        @if(request('event_id') || request('payment_status'))
                         <div class="col-md-2">
                             <label class="form-label">&nbsp;</label>
                             <div>
                                 <a href="{{ route('admin.reports.transactions') }}" class="btn btn-outline-secondary">
-                                    <i class="fas fa-times me-1"></i>Clear Filter
+                                    <i class="fas fa-times me-1"></i>Clear Filters
                                 </a>
                             </div>
                         </div>
@@ -65,7 +75,7 @@
 
     <!-- Statistics Cards -->
     <div class="row mb-4">
-        <div class="col-md-4 mb-3">
+        <div class="col-md-3 mb-3">
             <div class="card bg-success text-white">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
@@ -78,7 +88,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 mb-3">
+        <div class="col-md-3 mb-3">
             <div class="card bg-warning text-white">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
@@ -91,7 +101,20 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 mb-3">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="card-title">৳{{ number_format($failedAmount, 2) }}</h4>
+                            <p class="card-text">Failed Amount</p>
+                        </div>
+                        <i class="fas fa-times-circle fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
             <div class="card bg-info text-white">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">

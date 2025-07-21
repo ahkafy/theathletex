@@ -28,7 +28,7 @@
             <div class="card">
                 <div class="card-body">
                     <form method="GET" action="{{ route('admin.reports.participants') }}" class="row g-3">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="event_id" class="form-label">Filter by Event</label>
                             <select name="event_id" id="event_id" class="form-select">
                                 <option value="">All Events</option>
@@ -39,6 +39,15 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="col-md-3">
+                            <label for="payment_status" class="form-label">Filter by Payment Status</label>
+                            <select name="payment_status" id="payment_status" class="form-select">
+                                <option value="">All Payment Status</option>
+                                <option value="paid" {{ request('payment_status') == 'paid' ? 'selected' : '' }}>Paid</option>
+                                <option value="pending" {{ request('payment_status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                                <option value="failed" {{ request('payment_status') == 'failed' ? 'selected' : '' }}>Failed</option>
+                            </select>
+                        </div>
                         <div class="col-md-2">
                             <label class="form-label">&nbsp;</label>
                             <div>
@@ -47,12 +56,12 @@
                                 </button>
                             </div>
                         </div>
-                        @if(request('event_id'))
+                        @if(request('event_id') || request('payment_status'))
                         <div class="col-md-2">
                             <label class="form-label">&nbsp;</label>
                             <div>
                                 <a href="{{ route('admin.reports.participants') }}" class="btn btn-outline-secondary">
-                                    <i class="fas fa-times me-1"></i>Clear Filter
+                                    <i class="fas fa-times me-1"></i>Clear Filters
                                 </a>
                             </div>
                         </div>
@@ -96,10 +105,10 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h4 class="card-title">{{ $stats['today_registrations'] }}</h4>
-                            <p class="card-text">Today's Registrations</p>
+                            <h4 class="card-title">{{ $stats['pending_participants'] }}</h4>
+                            <p class="card-text">Pending Payments</p>
                         </div>
-                        <i class="fas fa-calendar-day fa-2x opacity-75"></i>
+                        <i class="fas fa-clock fa-2x opacity-75"></i>
                     </div>
                 </div>
             </div>
@@ -109,10 +118,10 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h4 class="card-title">{{ $stats['gender_data_available'] }}</h4>
-                            <p class="card-text">Gender Data Available</p>
+                            <h4 class="card-title">{{ $stats['today_registrations'] }}</h4>
+                            <p class="card-text">Today's Registrations</p>
                         </div>
-                        <i class="fas fa-venus-mars fa-2x opacity-75"></i>
+                        <i class="fas fa-calendar-day fa-2x opacity-75"></i>
                     </div>
                 </div>
             </div>

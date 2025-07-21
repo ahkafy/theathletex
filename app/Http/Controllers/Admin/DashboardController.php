@@ -41,6 +41,7 @@ class DashboardController extends Controller
     public function participants(Request $request)
     {
         $eventId = $request->get('event_id');
+        $paymentStatus = $request->get('payment_status');
 
         // Fetch participants data with event and transaction information
         $participantsQuery = Participant::with(['event', 'transactions'])
@@ -50,9 +51,28 @@ class DashboardController extends Controller
             $participantsQuery->where('event_id', $eventId);
         }
 
+        // Filter by payment status
+        if ($paymentStatus) {
+            if ($paymentStatus === 'paid') {
+                $participantsQuery->whereHas('transactions', function($query) {
+                    $query->where('status', 'complete');
+                });
+            } elseif ($paymentStatus === 'pending') {
+                $participantsQuery->whereDoesntHave('transactions', function($query) {
+                    $query->where('status', 'complete');
+                });
+            } elseif ($paymentStatus === 'failed') {
+                $participantsQuery->whereHas('transactions', function($query) {
+                    $query->where('status', 'failed');
+                })->whereDoesntHave('transactions', function($query) {
+                    $query->where('status', 'complete');
+                });
+            }
+        }
+
         $participants = $participantsQuery->paginate(20);
 
-        // Calculate statistics (filtered by event if selected)
+        // Calculate statistics (filtered by event and payment status if selected)
         $statsQuery = Participant::query();
         if ($eventId) {
             $statsQuery->where('event_id', $eventId);
@@ -63,6 +83,9 @@ class DashboardController extends Controller
             'paid_participants' => (clone $statsQuery)->whereHas('transactions', function($query) {
                 $query->where('status', 'complete');
             })->count(),
+            'pending_participants' => (clone $statsQuery)->whereDoesntHave('transactions', function($query) {
+                $query->where('status', 'complete');
+            })->count(),
             'today_registrations' => (clone $statsQuery)->whereDate('created_at', today())->count(),
             'gender_data_available' => (clone $statsQuery)->whereNotNull('gender')->count(),
         ];
@@ -71,12 +94,13 @@ class DashboardController extends Controller
         $events = Event::orderBy('name')->get();
         $selectedEvent = $eventId ? Event::find($eventId) : null;
 
-        return view('admin.reports.participants', compact('participants', 'stats', 'events', 'selectedEvent'));
+        return view('admin.reports.participants', compact('participants', 'stats', 'events', 'selectedEvent', 'paymentStatus'));
     }
 
     public function transactions(Request $request)
     {
         $eventId = $request->get('event_id');
+        $paymentStatus = $request->get('payment_status');
 
         // Transaction reports with filtering options
         $transactionsQuery = Transaction::with(['participant', 'event'])
@@ -86,28 +110,36 @@ class DashboardController extends Controller
             $transactionsQuery->where('event_id', $eventId);
         }
 
+        // Filter by payment status
+        if ($paymentStatus) {
+            $transactionsQuery->where('status', $paymentStatus);
+        }
+
         $transactions = $transactionsQuery->paginate(20);
 
-        // Calculate statistics (filtered by event if selected)
+        // Calculate statistics (filtered by event and payment status if selected)
         $revenueQuery = Transaction::where('status', 'complete');
         $pendingQuery = Transaction::where('status', 'pending');
+        $failedQuery = Transaction::where('status', 'failed');
         $todayQuery = Transaction::where('status', 'complete')->whereDate('created_at', today());
 
         if ($eventId) {
             $revenueQuery->where('event_id', $eventId);
             $pendingQuery->where('event_id', $eventId);
+            $failedQuery->where('event_id', $eventId);
             $todayQuery->where('event_id', $eventId);
         }
 
         $totalRevenue = $revenueQuery->sum('amount');
         $pendingAmount = $pendingQuery->sum('amount');
+        $failedAmount = $failedQuery->sum('amount');
         $todayRevenue = $todayQuery->sum('amount');
 
         // Get all events for the filter dropdown
         $events = Event::orderBy('name')->get();
         $selectedEvent = $eventId ? Event::find($eventId) : null;
 
-        return view('admin.reports.transactions', compact('transactions', 'totalRevenue', 'pendingAmount', 'todayRevenue', 'events', 'selectedEvent'));
+        return view('admin.reports.transactions', compact('transactions', 'totalRevenue', 'pendingAmount', 'failedAmount', 'todayRevenue', 'events', 'selectedEvent', 'paymentStatus'));
     }
 
     public function events()
@@ -223,6 +255,7 @@ class DashboardController extends Controller
     public function exportParticipants(Request $request)
     {
         $eventId = $request->get('event_id');
+        $paymentStatus = $request->get('payment_status');
 
         // Export participants data as CSV
         $participantsQuery = Participant::with(['event', 'transactions']);
@@ -231,13 +264,32 @@ class DashboardController extends Controller
             $participantsQuery->where('event_id', $eventId);
         }
 
+        // Filter by payment status
+        if ($paymentStatus) {
+            if ($paymentStatus === 'paid') {
+                $participantsQuery->whereHas('transactions', function($query) {
+                    $query->where('status', 'complete');
+                });
+            } elseif ($paymentStatus === 'pending') {
+                $participantsQuery->whereDoesntHave('transactions', function($query) {
+                    $query->where('status', 'complete');
+                });
+            } elseif ($paymentStatus === 'failed') {
+                $participantsQuery->whereHas('transactions', function($query) {
+                    $query->where('status', 'failed');
+                })->whereDoesntHave('transactions', function($query) {
+                    $query->where('status', 'complete');
+                });
+            }
+        }
+
         $participants = $participantsQuery->get();
 
         // Create more detailed CSV header
         $csvData = "Name,Email,Phone,Event,Category,Registration Type,Gender,Date of Birth,T-Shirt Size,Address,Thana,District,Emergency Contact,Registration Date,Payment Status,Total Paid,Fee Amount\n";
 
         foreach ($participants as $participant) {
-            $paymentStatus = $participant->transactions->where('status', 'complete')->count() > 0 ? 'Paid' : 'Pending';
+            $paymentStatusText = $participant->transactions->where('status', 'complete')->count() > 0 ? 'Paid' : 'Pending';
             $totalPaid = $participant->transactions->where('status', 'complete')->sum('amount');
             $eventName = $participant->event ? $participant->event->name : 'No Event';
 
@@ -257,20 +309,29 @@ class DashboardController extends Controller
                 $participant->district ?: '',
                 $participant->emergency_phone ?: 'N/A',
                 $participant->created_at->format('Y-m-d H:i:s'),
-                $paymentStatus,
+                $paymentStatusText,
                 $totalPaid,
                 $participant->fee ?: 0
             );
         }
 
         // Generate descriptive filename
+        $filenameParts = ['participants'];
+
         if ($eventId) {
             $event = Event::find($eventId);
             $eventSlug = $event ? \Str::slug($event->name) : 'event_' . $eventId;
-            $filename = 'participants_' . $eventSlug . '_' . date('Y-m-d_H-i-s') . '.csv';
+            $filenameParts[] = $eventSlug;
         } else {
-            $filename = 'participants_all_events_' . date('Y-m-d_H-i-s') . '.csv';
+            $filenameParts[] = 'all_events';
         }
+
+        if ($paymentStatus) {
+            $filenameParts[] = $paymentStatus;
+        }
+
+        $filenameParts[] = date('Y-m-d_H-i-s');
+        $filename = implode('_', $filenameParts) . '.csv';
 
         return response($csvData)
             ->header('Content-Type', 'text/csv')
@@ -280,12 +341,18 @@ class DashboardController extends Controller
     public function exportTransactions(Request $request)
     {
         $eventId = $request->get('event_id');
+        $paymentStatus = $request->get('payment_status');
 
         // Export transactions data as CSV
         $transactionsQuery = Transaction::with(['participant', 'event']);
 
         if ($eventId) {
             $transactionsQuery->where('event_id', $eventId);
+        }
+
+        // Filter by payment status
+        if ($paymentStatus) {
+            $transactionsQuery->where('status', $paymentStatus);
         }
 
         $transactions = $transactionsQuery->get();
@@ -322,13 +389,22 @@ class DashboardController extends Controller
         }
 
         // Generate descriptive filename
+        $filenameParts = ['transactions'];
+
         if ($eventId) {
             $event = Event::find($eventId);
             $eventSlug = $event ? \Str::slug($event->name) : 'event_' . $eventId;
-            $filename = 'transactions_' . $eventSlug . '_' . date('Y-m-d_H-i-s') . '.csv';
+            $filenameParts[] = $eventSlug;
         } else {
-            $filename = 'transactions_all_events_' . date('Y-m-d_H-i-s') . '.csv';
+            $filenameParts[] = 'all_events';
         }
+
+        if ($paymentStatus) {
+            $filenameParts[] = $paymentStatus;
+        }
+
+        $filenameParts[] = date('Y-m-d_H-i-s');
+        $filename = implode('_', $filenameParts) . '.csv';
 
         return response($csvData)
             ->header('Content-Type', 'text/csv')
