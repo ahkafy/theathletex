@@ -198,8 +198,8 @@
                             </td>
                             <td>
                                 @php
-                                    $hasCompletedTransaction = $participant->transactions->where('status', 'complete')->count() > 0;
-                                    $totalPaid = $participant->transactions->where('status', 'complete')->sum('amount');
+                                    $hasCompletedTransaction = $participant->transactions->whereIn('status', ['complete', 'Complete'])->count() > 0;
+                                    $totalPaid = $participant->transactions->whereIn('status', ['complete', 'Complete'])->sum('amount');
                                 @endphp
                                 @if($hasCompletedTransaction)
                                     <span class="badge bg-success">Paid</span><br>

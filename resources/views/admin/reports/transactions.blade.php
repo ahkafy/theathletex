@@ -43,10 +43,9 @@
                             <label for="payment_status" class="form-label">Filter by Payment Status</label>
                             <select name="payment_status" id="payment_status" class="form-select">
                                 <option value="">All Status</option>
-                                <option value="complete" {{ request('payment_status') == 'complete' ? 'selected' : '' }}>Complete</option>
+                                <option value="paid" {{ request('payment_status') == 'paid' ? 'selected' : '' }}>Paid</option>
                                 <option value="pending" {{ request('payment_status') == 'pending' ? 'selected' : '' }}>Pending</option>
                                 <option value="failed" {{ request('payment_status') == 'failed' ? 'selected' : '' }}>Failed</option>
-                                <option value="cancelled" {{ request('payment_status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                             </select>
                         </div>
                         <div class="col-md-2">
@@ -161,7 +160,7 @@
                             <td>{{ $transaction->event->name }}</td>
                             <td>৳{{ number_format($transaction->amount, 2) }}</td>
                             <td>
-                                <span class="badge bg-{{ $transaction->status == 'complete' ? 'success' : ($transaction->status == 'pending' ? 'warning' : 'danger') }}">
+                                <span class="badge bg-{{ in_array($transaction->status, ['complete', 'Complete']) ? 'success' : (in_array($transaction->status, ['pending', 'Pending']) ? 'warning' : 'danger') }}">
                                     {{ ucfirst($transaction->status) }}
                                 </span>
                             </td>

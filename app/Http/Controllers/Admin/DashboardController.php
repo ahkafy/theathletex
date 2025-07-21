@@ -55,17 +55,17 @@ class DashboardController extends Controller
         if ($paymentStatus) {
             if ($paymentStatus === 'paid') {
                 $participantsQuery->whereHas('transactions', function($query) {
-                    $query->where('status', 'complete');
+                    $query->whereIn('status', ['complete', 'Complete']);
                 });
             } elseif ($paymentStatus === 'pending') {
                 $participantsQuery->whereDoesntHave('transactions', function($query) {
-                    $query->where('status', 'complete');
+                    $query->whereIn('status', ['complete', 'Complete']);
                 });
             } elseif ($paymentStatus === 'failed') {
                 $participantsQuery->whereHas('transactions', function($query) {
-                    $query->where('status', 'failed');
+                    $query->whereIn('status', ['failed', 'Failed']);
                 })->whereDoesntHave('transactions', function($query) {
-                    $query->where('status', 'complete');
+                    $query->whereIn('status', ['complete', 'Complete']);
                 });
             }
         }
@@ -81,10 +81,10 @@ class DashboardController extends Controller
         $stats = [
             'total_participants' => (clone $statsQuery)->count(),
             'paid_participants' => (clone $statsQuery)->whereHas('transactions', function($query) {
-                $query->where('status', 'complete');
+                $query->whereIn('status', ['complete', 'Complete']);
             })->count(),
             'pending_participants' => (clone $statsQuery)->whereDoesntHave('transactions', function($query) {
-                $query->where('status', 'complete');
+                $query->whereIn('status', ['complete', 'Complete']);
             })->count(),
             'today_registrations' => (clone $statsQuery)->whereDate('created_at', today())->count(),
             'gender_data_available' => (clone $statsQuery)->whereNotNull('gender')->count(),
@@ -112,16 +112,22 @@ class DashboardController extends Controller
 
         // Filter by payment status
         if ($paymentStatus) {
-            $transactionsQuery->where('status', $paymentStatus);
+            if ($paymentStatus === 'paid') {
+                $transactionsQuery->whereIn('status', ['complete', 'Complete']);
+            } elseif ($paymentStatus === 'pending') {
+                $transactionsQuery->whereIn('status', ['pending', 'Pending']);
+            } elseif ($paymentStatus === 'failed') {
+                $transactionsQuery->whereIn('status', ['failed', 'Failed']);
+            }
         }
 
         $transactions = $transactionsQuery->paginate(20);
 
         // Calculate statistics (filtered by event and payment status if selected)
-        $revenueQuery = Transaction::where('status', 'complete');
-        $pendingQuery = Transaction::where('status', 'pending');
-        $failedQuery = Transaction::where('status', 'failed');
-        $todayQuery = Transaction::where('status', 'complete')->whereDate('created_at', today());
+        $revenueQuery = Transaction::whereIn('status', ['complete', 'Complete']);
+        $pendingQuery = Transaction::whereIn('status', ['pending', 'Pending']);
+        $failedQuery = Transaction::whereIn('status', ['failed', 'Failed']);
+        $todayQuery = Transaction::whereIn('status', ['complete', 'Complete'])->whereDate('created_at', today());
 
         if ($eventId) {
             $revenueQuery->where('event_id', $eventId);
@@ -268,17 +274,17 @@ class DashboardController extends Controller
         if ($paymentStatus) {
             if ($paymentStatus === 'paid') {
                 $participantsQuery->whereHas('transactions', function($query) {
-                    $query->where('status', 'complete');
+                    $query->whereIn('status', ['complete', 'Complete']);
                 });
             } elseif ($paymentStatus === 'pending') {
                 $participantsQuery->whereDoesntHave('transactions', function($query) {
-                    $query->where('status', 'complete');
+                    $query->whereIn('status', ['complete', 'Complete']);
                 });
             } elseif ($paymentStatus === 'failed') {
                 $participantsQuery->whereHas('transactions', function($query) {
-                    $query->where('status', 'failed');
+                    $query->whereIn('status', ['failed', 'Failed']);
                 })->whereDoesntHave('transactions', function($query) {
-                    $query->where('status', 'complete');
+                    $query->whereIn('status', ['complete', 'Complete']);
                 });
             }
         }
@@ -289,8 +295,8 @@ class DashboardController extends Controller
         $csvData = "Name,Email,Phone,Event,Category,Registration Type,Gender,Date of Birth,T-Shirt Size,Address,Thana,District,Emergency Contact,Registration Date,Payment Status,Total Paid,Fee Amount\n";
 
         foreach ($participants as $participant) {
-            $paymentStatusText = $participant->transactions->where('status', 'complete')->count() > 0 ? 'Paid' : 'Pending';
-            $totalPaid = $participant->transactions->where('status', 'complete')->sum('amount');
+            $paymentStatusText = $participant->transactions->whereIn('status', ['complete', 'Complete'])->count() > 0 ? 'Paid' : 'Pending';
+            $totalPaid = $participant->transactions->whereIn('status', ['complete', 'Complete'])->sum('amount');
             $eventName = $participant->event ? $participant->event->name : 'No Event';
 
             $csvData .= sprintf(
@@ -352,7 +358,13 @@ class DashboardController extends Controller
 
         // Filter by payment status
         if ($paymentStatus) {
-            $transactionsQuery->where('status', $paymentStatus);
+            if ($paymentStatus === 'paid') {
+                $transactionsQuery->whereIn('status', ['complete', 'Complete']);
+            } elseif ($paymentStatus === 'pending') {
+                $transactionsQuery->whereIn('status', ['pending', 'Pending']);
+            } elseif ($paymentStatus === 'failed') {
+                $transactionsQuery->whereIn('status', ['failed', 'Failed']);
+            }
         }
 
         $transactions = $transactionsQuery->get();
