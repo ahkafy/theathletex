@@ -1,0 +1,6 @@
+position,participant_name,participant_email,bib_number,sex,category,laps,finish_time,gap,distance,chip_time,speed,best_lap,dnf,dsq,notes
+1,John Doe,john.doe@email.com,101,M,Men 18-29,5,1:15:30,,10.5,1:15:25,8.4,14:15,false,false,
+2,Jane Smith,jane.smith@email.com,102,F,Women 18-29,5,1:18:45,+3:15,10.5,1:18:40,8.1,15:20,false,false,
+3,Mike Johnson,mike.johnson@email.com,103,M,Men 30-39,5,1:20:15,+4:45,10.5,1:20:10,7.9,15:45,false,false,
+4,Sarah Wilson,sarah.wilson@email.com,104,F,Women 30-39,4,,,10.5,,,,true,false,Did not finish - injury
+5,Tom Brown,tom.brown@email.com,105,M,Men 40-49,5,1:25:30,+10:00,10.5,1:25:25,7.4,16:30,false,false,

@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\EventResultController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SslCommerzPaymentController;
@@ -44,3 +45,8 @@ Route::post('/cancel', [SslCommerzPaymentController::class, 'cancel']);
 
 Route::post('/ipn', [SslCommerzPaymentController::class, 'ipn']);
 //SSLCOMMERZ END
+
+// Event Results Routes
+Route::get('/events/{eventSlug}/results', [EventResultController::class, 'index'])->name('events.results');
+Route::get('/events/{eventSlug}/results/category/{category}', [EventResultController::class, 'byCategory'])->name('events.results.category');
+Route::get('/events/{eventSlug}/certificate/{participantId}', [EventResultController::class, 'certificate'])->name('events.certificate');

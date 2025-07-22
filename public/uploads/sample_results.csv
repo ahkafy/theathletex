@@ -1,0 +1,8 @@
+position,bib_number,participant_name,participant_email,sex,category,category_position,laps,finish_time,gap,distance,chip_time,speed,best_lap,dnf,dsq,notes
+1,001,John Smith,john.smith@example.com,M,Open Male,1,5,01:23:45,00:00:00,10.5,01:23:40,12.5,00:16:30,false,false,Great performance
+2,002,Jane Doe,jane.doe@example.com,F,Open Female,1,5,01:25:12,00:01:27,10.5,01:25:08,12.2,00:16:45,false,false,
+3,003,Mike Johnson,mike.johnson@example.com,M,Open Male,2,5,01:27:33,00:03:48,10.5,01:27:28,11.8,00:17:12,false,false,
+4,004,Sarah Wilson,sarah.wilson@example.com,F,Open Female,2,5,01:29:15,00:05:30,10.5,01:29:10,11.5,00:17:35,false,false,
+5,005,David Brown,david.brown@example.com,M,Masters Male,1,5,01:31:22,00:07:37,10.5,01:31:18,11.2,00:18:02,false,false,Strong finish
+6,006,Lisa Davis,lisa.davis@example.com,F,Masters Female,1,4,DNF,DNF,8.4,01:15:30,10.8,00:18:45,true,false,Did not finish
+7,007,Tom Anderson,tom.anderson@example.com,M,Open Male,3,5,DSQ,DSQ,10.5,01:26:45,12.0,00:16:58,false,true,False start

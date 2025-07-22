@@ -25,7 +25,7 @@ class EventController extends Controller
     // Display a listing of the resource
     public function index()
     {
-        $events = Event::with('fees') // Eager load fees relationship
+        $events = Event::with(['fees', 'categories', 'participants']) // Eager load relationships
             ->orderBy('start_time', 'desc') // Order by start time, descending
             ->get();
         return view('admin.events.index', compact('events'));
