@@ -50,3 +50,9 @@ Route::post('/ipn', [SslCommerzPaymentController::class, 'ipn']);
 Route::get('/events/{eventSlug}/results', [EventResultController::class, 'index'])->name('events.results');
 Route::get('/events/{eventSlug}/results/category/{category}', [EventResultController::class, 'byCategory'])->name('events.results.category');
 Route::get('/events/{eventSlug}/certificate/{participantId}', [EventResultController::class, 'certificate'])->name('events.certificate');
+
+// Policy Pages
+Route::get('/about', [HomeController::class, 'about'])->name('about');
+Route::get('/privacy', [HomeController::class, 'privacy'])->name('privacy');
+Route::get('/delivery', [HomeController::class, 'delivery'])->name('delivery');
+Route::get('/return', [HomeController::class, 'return'])->name('return');
