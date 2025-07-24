@@ -177,13 +177,14 @@
                 <p class="small">We’re a dedicated platform connecting athletes and organizers through technology-driven sports events.</p>
             </div>
 
-            <!-- Legal -->
+            <!-- Policies -->
             <div class="col-md-3 mb-4">
-                <h5>Legal</h5>
+                <h5>Policies</h5>
                 <ul class="list-unstyled small">
-                    <li><a href="#" class="text-white text-decoration-none">Privacy Policy</a></li>
-                    <li><a href="#" class="text-white text-decoration-none">Terms & Conditions</a></li>
-                    <li><a href="#" class="text-white text-decoration-none">Cookie Policy</a></li>
+                    <li><a href="{{ route('about') }}" class="text-white text-decoration-none">About Us</a></li>
+                    <li><a href="{{ route('privacy') }}" class="text-white text-decoration-none">Privacy Policy</a></li>
+                    <li><a href="{{ route('delivery') }}" class="text-white text-decoration-none">Delivery Policy</a></li>
+                    <li><a href="{{ route('return') }}" class="text-white text-decoration-none">Return Policy</a></li>
                 </ul>
             </div>
 
@@ -191,16 +192,25 @@
             <div class="col-md-3 mb-4">
                 <h5>Contact</h5>
                 <ul class="list-unstyled small">
-                    <li><i class="bi bi-envelope me-2"></i> info@theathletex.net</li>
-                    <li><i class="bi bi-telephone me-2"></i> +880 1234 567890</li>
-                    <li><i class="bi bi-geo-alt me-2"></i> Mirpur, Dhaka, Bangladesh</li>
+                    <li><i class="bi bi-geo-alt me-2"></i>18/4, Pallabi Road, Dhaka 1216</li>
+                    <li><i class="bi bi-telephone me-2"></i>+880 1775 269643</li>
+                    <li><i class="bi bi-envelope me-2"></i>info@theathletex.net</li>
+                    <li><i class="bi bi-card-text me-2"></i>Trade License: TRAD/DSCC/088847/2024</li>
                 </ul>
+            </div>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="row mt-4 pt-4 border-top border-secondary">
+            <div class="col-12 text-center">
+                <h6>Secure Payment Methods</h6>
+                <img src="{{ url('/payment_banner.png') }}" alt="Payment Methods" class="img-fluid" style="max-height: 260px;">
             </div>
         </div>
 
         <hr class="border-light">
         <div class="text-center small">
-            © 2025 The Athlete X Limited. All rights reserved.
+            © 2025 The Athlete X Limited. All rights reserved. | Built in Bangladesh
         </div>
     </div>
 </footer>

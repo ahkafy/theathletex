@@ -144,7 +144,7 @@
                             If you have questions about this Privacy Policy or wish to exercise your rights regarding your personal information, please contact us:
                         </p>
                         <ul class="text-muted mb-0">
-                            <li><strong>Email:</strong> privacy@theathletex.com</li>
+                            <li><strong>Email:</strong> privacy@theathletex.net</li>
                             <li><strong>Address:</strong> TheAthleteX Privacy Team, Dhaka, Bangladesh</li>
                             <li><strong>Response Time:</strong> We aim to respond to all privacy inquiries within 48 hours</li>
                         </ul>
