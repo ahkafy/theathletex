@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TestMailController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RegistrationController;
@@ -56,3 +57,6 @@ Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/privacy', [HomeController::class, 'privacy'])->name('privacy');
 Route::get('/delivery', [HomeController::class, 'delivery'])->name('delivery');
 Route::get('/return', [HomeController::class, 'return'])->name('return');
+
+Route::get('/testmail', [TestMailController::class, 'showForm']);
+Route::post('/testmail', [TestMailController::class, 'send']);
