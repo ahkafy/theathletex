@@ -50,6 +50,12 @@ class EventController extends Controller
             'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'venue' => 'nullable|string',
             'status' => 'string|in:scheduled,open,closed,complete',
+            'dynamic_fields' => 'nullable|array',
+            'dynamic_fields.*.label' => 'required_with:dynamic_fields|string|max:255',
+            'dynamic_fields.*.type' => 'required_with:dynamic_fields|string|in:text,email,number,select,textarea,date',
+            'dynamic_fields.*.info' => 'nullable|string|max:500',
+            'dynamic_fields.*.options' => 'nullable|string',
+            'dynamic_fields.*.required' => 'nullable|boolean',
         ]);
 
         // Generate a slug from the event name
@@ -107,6 +113,32 @@ class EventController extends Controller
 
         // Create the event
         // Prepare the data for event creation, ensuring only fillable fields are used
+
+        // Process dynamic fields configuration
+        $dynamicFieldsConfig = [];
+        if ($request->has('dynamic_fields')) {
+            foreach ($request->input('dynamic_fields') as $field) {
+                if (!empty($field['label']) && !empty($field['type'])) {
+                    $configField = [
+                        'label' => $field['label'],
+                        'type' => $field['type'],
+                        'required' => isset($field['required']) ? true : false,
+                    ];
+
+                    // Add info field if provided
+                    if (!empty($field['info'])) {
+                        $configField['info'] = $field['info'];
+                    }
+
+                    if ($field['type'] === 'select' && !empty($field['options'])) {
+                        $configField['options'] = array_map('trim', explode(',', $field['options']));
+                    }
+
+                    $dynamicFieldsConfig[] = $configField;
+                }
+            }
+        }
+
         $eventData = [
             'name'        => $request->input('name'),
             'slug'        => $request->input('slug'),
@@ -117,6 +149,7 @@ class EventController extends Controller
             'cover_photo' => $request->input('cover_photo'),
             'venue'       => $request->input('venue'),
             'status'      => $request->input('status'),
+            'dynamic_fields_config' => $dynamicFieldsConfig,
         ];
 
         // Create the event using the prepared data
@@ -202,6 +235,12 @@ class EventController extends Controller
             'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'venue' => 'nullable|string',
             'status' => 'string|in:scheduled,open,closed,complete',
+            'dynamic_fields' => 'nullable|array',
+            'dynamic_fields.*.label' => 'required_with:dynamic_fields|string|max:255',
+            'dynamic_fields.*.type' => 'required_with:dynamic_fields|string|in:text,email,number,select,textarea,date',
+            'dynamic_fields.*.info' => 'nullable|string|max:500',
+            'dynamic_fields.*.options' => 'nullable|string',
+            'dynamic_fields.*.required' => 'nullable|boolean',
         ]);
 
         // Generate a slug from the event name if name changed
@@ -252,6 +291,31 @@ class EventController extends Controller
             $event->cover_photo = 'storage/' . $path;
         }
 
+        // Process dynamic fields configuration
+        $dynamicFieldsConfig = [];
+        if ($request->has('dynamic_fields')) {
+            foreach ($request->input('dynamic_fields') as $field) {
+                if (!empty($field['label']) && !empty($field['type'])) {
+                    $configField = [
+                        'label' => $field['label'],
+                        'type' => $field['type'],
+                        'required' => isset($field['required']) ? true : false,
+                    ];
+
+                    // Add info field if provided
+                    if (!empty($field['info'])) {
+                        $configField['info'] = $field['info'];
+                    }
+
+                    if ($field['type'] === 'select' && !empty($field['options'])) {
+                        $configField['options'] = array_map('trim', explode(',', $field['options']));
+                    }
+
+                    $dynamicFieldsConfig[] = $configField;
+                }
+            }
+        }
+
         // Update the event with the validated data
         $event->update([
             'name' => $request->input('name'),
@@ -261,6 +325,7 @@ class EventController extends Controller
             'capacity' => $request->input('capacity'),
             'venue' => $request->input('venue'),
             'status' => $request->input('status'),
+            'dynamic_fields_config' => $dynamicFieldsConfig,
         ]);
 
         // Save the updated event (this will save the cover_photo if it was updated)

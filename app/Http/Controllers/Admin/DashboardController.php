@@ -112,7 +112,6 @@ class DashboardController extends Controller
         $events = Event::orderBy('name')->get();
         $selectedEvent = $eventId ? Event::find($eventId) : null;
 
-        return view('admin.reports.participants', compact('participants', 'stats', 'events', 'selectedEvent', 'paymentStatus'));
         return view('admin.reports.participants', compact('participants', 'stats', 'events', 'selectedEvent', 'paymentStatus', 'eventCategoryId'));
     }
 

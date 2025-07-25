@@ -20,7 +20,7 @@
             Please fix the errors below.
             </div>
         @endif
-        <form method="POST" action="{{ route('register.store', $event->id) }}">
+        <form method="POST" action="{{ route('register.store', $event->slug) }}">
             @csrf
 
             <div class="mb-3">
@@ -166,6 +166,88 @@
                     <div class="invalid-feedback d-block">{{ $message }}</div>
                 @enderror
             </div>
+
+            <!-- Dynamic Fields -->
+            @if($event->dynamic_fields_config && count($event->dynamic_fields_config) > 0)
+                <div class="mb-4">
+                    <h6 class="text-muted">Additional Information</h6>
+                    @foreach($event->dynamic_fields_config as $index => $field)
+                        <div class="mb-3">
+                            <label for="dynamic_field_{{ $index }}" class="form-label">
+                                {{ $field['label'] }}
+                                @if($field['required']) <span class="text-danger">*</span> @endif
+                            </label>
+                            @if(isset($field['info']) && !empty($field['info']))
+                                <div class="form-text text-muted small mb-2">{{ $field['info'] }}</div>
+                            @endif
+
+                            @switch($field['type'])
+                                @case('text')
+                                    <input type="text"
+                                           class="form-control @error('dynamic_fields.'.$index) is-invalid @enderror"
+                                           id="dynamic_field_{{ $index }}"
+                                           name="dynamic_fields[{{ $index }}]"
+                                           value="{{ old('dynamic_fields.'.$index) }}"
+                                           {{ $field['required'] ? 'required' : '' }}>
+                                    @break
+
+                                @case('email')
+                                    <input type="email"
+                                           class="form-control @error('dynamic_fields.'.$index) is-invalid @enderror"
+                                           id="dynamic_field_{{ $index }}"
+                                           name="dynamic_fields[{{ $index }}]"
+                                           value="{{ old('dynamic_fields.'.$index) }}"
+                                           {{ $field['required'] ? 'required' : '' }}>
+                                    @break
+
+                                @case('number')
+                                    <input type="number"
+                                           class="form-control @error('dynamic_fields.'.$index) is-invalid @enderror"
+                                           id="dynamic_field_{{ $index }}"
+                                           name="dynamic_fields[{{ $index }}]"
+                                           value="{{ old('dynamic_fields.'.$index) }}"
+                                           {{ $field['required'] ? 'required' : '' }}>
+                                    @break
+
+                                @case('date')
+                                    <input type="date"
+                                           class="form-control @error('dynamic_fields.'.$index) is-invalid @enderror"
+                                           id="dynamic_field_{{ $index }}"
+                                           name="dynamic_fields[{{ $index }}]"
+                                           value="{{ old('dynamic_fields.'.$index) }}"
+                                           {{ $field['required'] ? 'required' : '' }}>
+                                    @break
+
+                                @case('select')
+                                    <select class="form-select @error('dynamic_fields.'.$index) is-invalid @enderror"
+                                            id="dynamic_field_{{ $index }}"
+                                            name="dynamic_fields[{{ $index }}]"
+                                            {{ $field['required'] ? 'required' : '' }}>
+                                        <option value="">Select {{ $field['label'] }}</option>
+                                        @if(isset($field['options']) && is_array($field['options']))
+                                            @foreach($field['options'] as $option)
+                                                <option value="{{ $option }}" {{ old('dynamic_fields.'.$index) == $option ? 'selected' : '' }}>{{ $option }}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                    @break
+
+                                @case('textarea')
+                                    <textarea class="form-control @error('dynamic_fields.'.$index) is-invalid @enderror"
+                                              id="dynamic_field_{{ $index }}"
+                                              name="dynamic_fields[{{ $index }}]"
+                                              rows="3"
+                                              {{ $field['required'] ? 'required' : '' }}>{{ old('dynamic_fields.'.$index) }}</textarea>
+                                    @break
+                            @endswitch
+
+                            @error('dynamic_fields.'.$index)
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    @endforeach
+                </div>
+            @endif
 
             <div class="mb-3">
                 <div class="form-check">

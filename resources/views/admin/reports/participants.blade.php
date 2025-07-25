@@ -177,6 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <th>Event</th>
                             <th>Personal Details</th>
                             <th>Address</th>
+                            <th>Dynamic Fields</th>
                             <th>Registration</th>
                             <th>Payment Status</th>
                             <th>Actions</th>
@@ -219,6 +220,22 @@ document.addEventListener('DOMContentLoaded', function() {
                                         {{ $participant->address }}<br>
                                         {{ $participant->thana }}, {{ $participant->district }}
                                     </small>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    @if($participant->dynamic_fields && is_array($participant->dynamic_fields))
+                                        @foreach($participant->dynamic_fields as $key => $value)
+                                            @if($participant->event && $participant->event->dynamic_fields_config && isset($participant->event->dynamic_fields_config[$key]))
+                                                <small>
+                                                    <strong>{{ $participant->event->dynamic_fields_config[$key]['label'] }}:</strong>
+                                                    {{ $value }}<br>
+                                                </small>
+                                            @endif
+                                        @endforeach
+                                    @else
+                                        <small class="text-muted">No additional data</small>
+                                    @endif
                                 </div>
                             </td>
                             <td>

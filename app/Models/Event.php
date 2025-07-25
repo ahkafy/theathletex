@@ -16,6 +16,13 @@ class Event extends Model
         'cover_photo',
         'venue',
         'status',
+        'dynamic_fields_config',
+    ];
+
+    protected $casts = [
+        'dynamic_fields_config' => 'array',
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
     ];
 
     public function getRouteKeyName()

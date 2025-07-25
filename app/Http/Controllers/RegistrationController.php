@@ -13,22 +13,22 @@ use Illuminate\Support\Facades\Session;
 class RegistrationController extends Controller
 {
 
-    public function otpForm($eventID)
+    public function otpForm($eventSlug)
     {
-        $event = Event::find($eventID);
+        $event = Event::where('slug', $eventSlug)->first();
         if (!$event) {
             return redirect('/')->with('error', 'Event not found');
         }
-        return view('registration.otp', compact('eventID', 'event'));
+        return view('registration.otp', compact('eventSlug', 'event'));
     }
 
-    public function sendOTP(Request $request, $eventID)
+    public function sendOTP(Request $request, $eventSlug)
     {
         $otp = rand(100000, 999999); // Example OTP generation
         session(['otp' => $otp]);
         session(['phone' => $request->phone]);
 
-        $event = Event::find($eventID);
+        $event = Event::where('slug', $eventSlug)->first();
         if (!$event) {
             return response()->json(['message' => 'Event not found'], 404);
         }
@@ -36,12 +36,12 @@ class RegistrationController extends Controller
         $msg = "Your OTP for registration in the event '{$event->name}' is: $otp";
         $this->smsSend($request->phone, $msg);
 
-        // You need to get $eventID from the request or session if not passed directly
+        // You need to get $eventSlug from the request or session if not passed directly
 
-        return view('registration.verify', compact('eventID', 'event', 'otp'))->with('success', 'OTP sent successfully. Please check your mobile for the OTP.');
+        return view('registration.verify', compact('eventSlug', 'event', 'otp'))->with('success', 'OTP sent successfully. Please check your mobile for the OTP.');
     }
 
-    public function verifyOTP(Request $request, $eventID)
+    public function verifyOTP(Request $request, $eventSlug)
     {
         $inputOtp = $request->input('otp');
         $sessionOtp = session('otp');
@@ -51,7 +51,7 @@ class RegistrationController extends Controller
         }
 
         if ($inputOtp == $sessionOtp) {
-            return redirect()->route('register.create', ['eventID' => $eventID])
+            return redirect()->route('register.create', ['eventSlug' => $eventSlug])
                 ->with('success', 'OTP verified successfully. Please proceed to registration.');
         } else {
             return redirect()->back()
@@ -59,22 +59,22 @@ class RegistrationController extends Controller
         }
     }
 
-    public function registrationForm($eventID)
+    public function registrationForm($eventSlug)
     {
-        $event = Event::where('id', $eventID)->with('fees', 'categories')->first();
+        $event = Event::where('slug', $eventSlug)->with('fees', 'categories')->first();
         if (!$event) {
             return redirect('/')->with('error', 'Event not found');
         }
         $verifiedPhone = session('phone');
         if (!$verifiedPhone) {
-            return redirect()->route('otp.form', ['eventID' => $eventID])
+            return redirect()->route('otp.form', ['eventSlug' => $eventSlug])
                 ->with('error', 'Please verify your phone number first.');
         }
 
-        return view('registration.form', compact('eventID', 'event', 'verifiedPhone'));
+        return view('registration.form', compact('eventSlug', 'event', 'verifiedPhone'));
     }
 
-    public function registerParticipant(Request $request, $eventID)
+    public function registerParticipant(Request $request, $eventSlug)
     {
         $request->validate([
             'reg_type' => 'required',
@@ -91,9 +91,10 @@ class RegistrationController extends Controller
             'nationality' => 'required|string|max:100',
             'tshirt_size' => 'required|string|max:10',
             'terms_agreed' => 'required|accepted',
+            'dynamic_fields' => 'nullable|array',
         ]);
 
-        $event = Event::where('id', $eventID)->with('fees')->first();
+        $event = Event::where('slug', $eventSlug)->with('fees')->first();
 
         if (!$event) {
             return redirect()->back()
@@ -110,7 +111,7 @@ class RegistrationController extends Controller
         }
 
         $participant = new Participant();
-        $participant->event_id = $eventID;
+        $participant->event_id = $event->id;
         $participant->reg_type = $fee->fee_type;
         $participant->category = $request->input('category');
         $participant->fee = $fee->fee_amount; // Assuming fee_amount is a field in the fees table
@@ -128,6 +129,12 @@ class RegistrationController extends Controller
         $participant->kit_option = $request->input('kit_option');
         $participant->terms_agreed = $request->input('terms_agreed');
         $participant->payment_method = $request->input('payment_method');
+
+        // Store dynamic fields
+        if ($request->has('dynamic_fields')) {
+            $participant->dynamic_fields = $request->input('dynamic_fields');
+        }
+
         // Add other fields as necessary
         $check = $participant->save();
 
@@ -135,7 +142,7 @@ class RegistrationController extends Controller
             // Create a transaction record
             $trx = Transaction::create([
                 'participant_id' => $participant->id,
-                'event_id' => $eventID,
+                'event_id' => $event->id,
                 'amount' => $fee->fee_amount, // Assuming fee_amount is a field in the fees table
                 'description' => 'Registration fee for event: ' . $event->name,
             ]);

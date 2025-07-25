@@ -20,7 +20,7 @@
 
             <div class="card w-100 mb-4">
                 <div class="card-body">
-                    <form method="POST" action="{{ route('otp.verify', $event->id) }}">
+                    <form method="POST" action="{{ route('otp.verify', $event->slug) }}">
                         @csrf
                         <div class="mb-3">
                             <label for="otp" class="form-label">OTP Code</label>

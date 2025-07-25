@@ -41,6 +41,54 @@
                                 $('.summernote').summernote({
                                     height: 200
                                 });
+
+                                // Dynamic fields functionality
+                                let fieldIndex = {{ $event->dynamic_fields_config ? count($event->dynamic_fields_config) : 0 }};
+
+                                $('#add-dynamic-field').click(function() {
+                                    const fieldHtml = `
+                                        <div class="border p-3 mb-2 dynamic-field-item">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <label class="form-label">Field Label</label>
+                                                    <input type="text" name="dynamic_fields[${fieldIndex}][label]" class="form-control" placeholder="e.g., School Name">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Field Type</label>
+                                                    <select name="dynamic_fields[${fieldIndex}][type]" class="form-select">
+                                                        <option value="text">Text</option>
+                                                        <option value="email">Email</option>
+                                                        <option value="number">Number</option>
+                                                        <option value="select">Dropdown</option>
+                                                        <option value="textarea">Textarea</option>
+                                                        <option value="date">Date</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="form-label">Help Text/Info</label>
+                                                    <input type="text" name="dynamic_fields[${fieldIndex}][info]" class="form-control" placeholder="e.g., Enter your current school name">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Options (for dropdown)</label>
+                                                    <input type="text" name="dynamic_fields[${fieldIndex}][options]" class="form-control" placeholder="Option1,Option2,Option3">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Required</label>
+                                                    <div class="form-check">
+                                                        <input type="checkbox" name="dynamic_fields[${fieldIndex}][required]" class="form-check-input" value="1">
+                                                        <label class="form-check-label">Required</label>
+                                                    </div>
+                                                    <button type="button" class="btn btn-sm btn-danger mt-1 remove-field">Remove</button>
+                                                </div>
+                                            </div>
+                                        </div>`;
+                                    $('#dynamic-fields-container').append(fieldHtml);
+                                    fieldIndex++;
+                                });
+
+                                $(document).on('click', '.remove-field', function() {
+                                    $(this).closest('.dynamic-field-item').remove();
+                                });
                             });
                         </script>
                     @endpush
@@ -99,6 +147,90 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+
+                    <!-- Dynamic Fields Configuration -->
+                    <div class="mb-3">
+                        <label class="form-label">Dynamic Fields for Registration</label>
+                        <div id="dynamic-fields-container">
+                            @if($event->dynamic_fields_config && count($event->dynamic_fields_config) > 0)
+                                @foreach($event->dynamic_fields_config as $index => $field)
+                                    <div class="border p-3 mb-2 dynamic-field-item">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <label class="form-label">Field Label</label>
+                                                <input type="text" name="dynamic_fields[{{ $index }}][label]" class="form-control" placeholder="e.g., School Name" value="{{ $field['label'] ?? '' }}">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label">Field Type</label>
+                                                <select name="dynamic_fields[{{ $index }}][type]" class="form-select">
+                                                    <option value="text" {{ ($field['type'] ?? '') == 'text' ? 'selected' : '' }}>Text</option>
+                                                    <option value="email" {{ ($field['type'] ?? '') == 'email' ? 'selected' : '' }}>Email</option>
+                                                    <option value="number" {{ ($field['type'] ?? '') == 'number' ? 'selected' : '' }}>Number</option>
+                                                    <option value="select" {{ ($field['type'] ?? '') == 'select' ? 'selected' : '' }}>Dropdown</option>
+                                                    <option value="textarea" {{ ($field['type'] ?? '') == 'textarea' ? 'selected' : '' }}>Textarea</option>
+                                                    <option value="date" {{ ($field['type'] ?? '') == 'date' ? 'selected' : '' }}>Date</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label">Help Text/Info</label>
+                                                <input type="text" name="dynamic_fields[{{ $index }}][info]" class="form-control" placeholder="e.g., Enter your current school name" value="{{ $field['info'] ?? '' }}">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label">Options (for dropdown)</label>
+                                                <input type="text" name="dynamic_fields[{{ $index }}][options]" class="form-control" placeholder="Option1,Option2,Option3" value="{{ isset($field['options']) && is_array($field['options']) ? implode(',', $field['options']) : '' }}">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label">Required</label>
+                                                <div class="form-check">
+                                                    <input type="checkbox" name="dynamic_fields[{{ $index }}][required]" class="form-check-input" value="1" {{ ($field['required'] ?? false) ? 'checked' : '' }}>
+                                                    <label class="form-check-label">Required</label>
+                                                </div>
+                                                <button type="button" class="btn btn-sm btn-danger mt-1 remove-field">Remove</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="border p-3 mb-2 dynamic-field-item">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <label class="form-label">Field Label</label>
+                                            <input type="text" name="dynamic_fields[0][label]" class="form-control" placeholder="e.g., School Name">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">Field Type</label>
+                                            <select name="dynamic_fields[0][type]" class="form-select">
+                                                <option value="text">Text</option>
+                                                <option value="email">Email</option>
+                                                <option value="number">Number</option>
+                                                <option value="select">Dropdown</option>
+                                                <option value="textarea">Textarea</option>
+                                                <option value="date">Date</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Help Text/Info</label>
+                                            <input type="text" name="dynamic_fields[0][info]" class="form-control" placeholder="e.g., Enter your current school name">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">Options (for dropdown)</label>
+                                            <input type="text" name="dynamic_fields[0][options]" class="form-control" placeholder="Option1,Option2,Option3">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">Required</label>
+                                            <div class="form-check">
+                                                <input type="checkbox" name="dynamic_fields[0][required]" class="form-check-input" value="1">
+                                                <label class="form-check-label">Required</label>
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-danger mt-1 remove-field">Remove</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                        <button type="button" class="btn btn-sm btn-secondary" id="add-dynamic-field">Add Field</button>
+                    </div>
+
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary">Update Event</button>
                         <a href="{{ route('admin.events.index') }}" class="btn btn-secondary">Cancel</a>
