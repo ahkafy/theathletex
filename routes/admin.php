@@ -23,6 +23,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/reports/revenue', [DashboardController::class, 'revenue'])->name('reports.revenue');
         Route::get('/reports/analytics', [DashboardController::class, 'analytics'])->name('reports.analytics');
 
+        // AJAX: Get Event Categories for a given Event
+        Route::get('/events/{event}/categories', [DashboardController::class, 'getEventCategories'])->name('events.categories');
+
         // Export Routes
         Route::get('/export/participants', [DashboardController::class, 'exportParticipants'])->name('export.participants');
         Route::get('/export/transactions', [DashboardController::class, 'exportTransactions'])->name('export.transactions');

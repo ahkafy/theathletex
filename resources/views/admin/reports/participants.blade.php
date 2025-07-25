@@ -40,6 +40,12 @@
                             </select>
                         </div>
                         <div class="col-md-3">
+                            <label for="event_category_id" class="form-label">Filter by Event Category</label>
+                            <select name="event_category_id" id="event_category_id" class="form-select">
+                                <option value="">All Categories</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
                             <label for="payment_status" class="form-label">Filter by Payment Status</label>
                             <select name="payment_status" id="payment_status" class="form-select">
                                 <option value="">All Payment Status</option>
@@ -67,6 +73,34 @@
                         </div>
                         @endif
                     </form>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const eventSelect = document.getElementById('event_id');
+    const categorySelect = document.getElementById('event_category_id');
+    function loadCategories(eventId, selectedCategory = '') {
+        categorySelect.innerHTML = '<option value="">All Categories</option>';
+        if (!eventId) return;
+        fetch(`/admin/events/${eventId}/categories`)
+            .then(res => res.json())
+            .then(data => {
+                data.forEach(cat => {
+                    const opt = document.createElement('option');
+                    opt.value = cat.name;
+                    opt.textContent = cat.name;
+                    if (cat.name == selectedCategory) opt.selected = true;
+                    categorySelect.appendChild(opt);
+                });
+            });
+    }
+    eventSelect.addEventListener('change', function() {
+        loadCategories(this.value);
+    });
+    // On page load, if event is selected, load categories
+    if (eventSelect.value) {
+        loadCategories(eventSelect.value, '{{ request('event_category_id') }}');
+    }
+});
+</script>
                 </div>
             </div>
         </div>

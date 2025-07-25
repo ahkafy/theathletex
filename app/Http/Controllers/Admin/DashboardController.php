@@ -38,17 +38,31 @@ class DashboardController extends Controller
         return view('admin.dashboard', compact('stats'));
     }
 
+    public function getEventCategories($eventId)
+    {
+        $categories = EventCategory::where('event_id', $eventId)->orderBy('name')->get(['id', 'name']);
+        return response()->json($categories);
+    }
+
     public function participants(Request $request)
     {
         $eventId = $request->get('event_id');
+        $eventCategoryId = $request->get('event_category_id');
         $paymentStatus = $request->get('payment_status');
 
         // Fetch participants data with event and transaction information
         $participantsQuery = Participant::with(['event', 'transactions'])
             ->orderBy('created_at', 'desc');
 
+
+
         if ($eventId) {
             $participantsQuery->where('event_id', $eventId);
+        }
+
+        // Filter by event category
+        if ($eventCategoryId) {
+            $participantsQuery->where('category', $eventCategoryId);
         }
 
         // Filter by payment status
@@ -78,6 +92,10 @@ class DashboardController extends Controller
             $statsQuery->where('event_id', $eventId);
         }
 
+        if ($eventCategoryId) {
+            $statsQuery->where('category', $eventCategoryId);
+        }
+
         $stats = [
             'total_participants' => (clone $statsQuery)->count(),
             'paid_participants' => (clone $statsQuery)->whereHas('transactions', function($query) {
@@ -95,6 +113,7 @@ class DashboardController extends Controller
         $selectedEvent = $eventId ? Event::find($eventId) : null;
 
         return view('admin.reports.participants', compact('participants', 'stats', 'events', 'selectedEvent', 'paymentStatus'));
+        return view('admin.reports.participants', compact('participants', 'stats', 'events', 'selectedEvent', 'paymentStatus', 'eventCategoryId'));
     }
 
     public function transactions(Request $request)
