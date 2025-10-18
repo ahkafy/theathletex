@@ -46,7 +46,7 @@
 <!-- Owl Carousel Banner -->
 <div class="owl-carousel owl-theme banner-carousel">
     <div class="item banner-slide">
-        <img src="{{ url('images/banner1.jpg') }}" alt="Banner 1" class="w-100 h-100 object-fit-cover">
+        <img src="{{ url('images/slider/2.jpg') }}" alt="Banner 1" class="w-100 h-100 object-fit-cover">
         <div class="banner-overlay"></div>
         <div class="banner-text">
             <h2 class="text-uppercase">It's happening</h2>
@@ -54,7 +54,7 @@
         </div>
     </div>
     <div class="item banner-slide">
-        <img src="{{ url('images/banner2.jpg') }}" alt="Banner 2" class="w-100 h-100 object-fit-cover">
+        <img src="{{ url('images/slider/3.jpg') }}" alt="Banner 2" class="w-100 h-100 object-fit-cover">
         <div class="banner-overlay"></div>
         <div class="banner-text">
             <h2 class="text-uppercase">It's happening</h2>
@@ -62,7 +62,16 @@
         </div>
     </div>
     <div class="item banner-slide">
-        <img src="{{ url('images/banner3.jpg') }}" alt="Banner 3" class="w-100 h-100 object-fit-cover">
+        <img src="{{ url('images/slider/4.jpg') }}" alt="Banner 3" class="w-100 h-100 object-fit-cover">
+        <div class="banner-overlay"></div>
+        <div class="banner-text">
+            <h2 class="text-uppercase">It's happening</h2>
+            <button class="btn global_button mt-3 px-5 py-2 fs-5 text-uppercase rounded-1 ">Go for all events</button>
+        </div>
+    </div>
+
+    <div class="item banner-slide">
+        <img src="{{ url('images/slider/1.jpg') }}" alt="Banner 3" class="w-100 h-100 object-fit-cover">
         <div class="banner-overlay"></div>
         <div class="banner-text">
             <h2 class="text-uppercase">It's happening</h2>
