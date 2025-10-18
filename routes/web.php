@@ -14,10 +14,23 @@ use App\Http\Controllers\SslCommerzPaymentController;
 
 
 
-Auth::routes();
+Auth::routes(['verify' => true]);
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+// Events pages
+Route::get('/events', [HomeController::class, 'allEvents'])->name('events.all');
+Route::get('/events/upcoming', [HomeController::class, 'upcomingEvents'])->name('events.upcoming');
+Route::get('/events/past', [HomeController::class, 'pastEvents'])->name('events.past');
+
+// Profile routes
+Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile.index');
+Route::get('/profile/edit', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+Route::patch('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+Route::post('/profile/verify-phone/send', [App\Http\Controllers\ProfileController::class, 'sendPhoneVerification'])->name('profile.send-phone-verification');
+Route::post('/profile/verify-phone', [App\Http\Controllers\ProfileController::class, 'verifyPhone'])->name('profile.verify-phone');
+Route::patch('/profile/password', [App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('profile.update-password');
 
 Route::get('/register/{eventID}/one', [RegistrationController::class, 'otpForm'])->name('otp.form');
 Route::get('/register/{eventID}/send', [RegistrationController::class, 'sendOTP'])->name('otp.send');

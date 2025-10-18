@@ -28,15 +28,45 @@
 
             <!-- Centered menu items -->
             <ul class="navbar-nav mx-auto text-center">
-                <li class="nav-item"><a class="nav-link text-white" href="#">Home</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="#">Events</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="#">Register</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="{{ url('/') }}">Home</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="eventsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Events
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="eventsDropdown">
+                        <li><a class="dropdown-item" href="{{ route('events.upcoming') }}">Upcoming Events</a></li>
+                        <li><a class="dropdown-item" href="{{ route('events.past') }}">Past Events</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{{ route('events.all') }}">All Events</a></li>
+                    </ul>
+                </li>
                 <li class="nav-item"><a class="nav-link text-white" href="#">Contact</a></li>
             </ul>
 
-            <!-- "For Organizer" button -->
+            <!-- Right-aligned auth menu -->
             <div class="text-center mt-3 mt-lg-0">
-                <a href="{{ url('organizer.html') }}" class="btn global_button px-4">For Organizer</a>
+                @auth
+                    <div class="d-flex gap-2 align-items-center">
+                        <a href="{{ route('profile.index') }}" class="btn btn-outline-light px-3">
+                            <i class="bi bi-person"></i> Profile
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-danger px-3">
+                                <i class="bi bi-box-arrow-right"></i> Logout
+                            </button>
+                        </form>
+                    </div>
+                @else
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('login') }}" class="btn btn-outline-light px-3">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </a>
+                        <a href="{{ route('register') }}" class="btn global_button px-3">
+                            <i class="bi bi-person-plus"></i> Register
+                        </a>
+                    </div>
+                @endauth
             </div>
         </div>
     </div>
@@ -50,7 +80,7 @@
         <div class="banner-overlay"></div>
         <div class="banner-text">
             <h2 class="text-uppercase">It's happening</h2>
-            <button class="btn global_button mt-3 px-5 py-2 fs-5 text-uppercase rounded-1 ">Go for all events</button>
+            <a href="{{ route('events.all') }}" class="btn global_button mt-3 px-5 py-2 fs-5 text-uppercase rounded-1">Go for all events</a>
         </div>
     </div>
     <div class="item banner-slide">
@@ -58,7 +88,7 @@
         <div class="banner-overlay"></div>
         <div class="banner-text">
             <h2 class="text-uppercase">It's happening</h2>
-            <button class="btn global_button mt-3 px-5 py-2 fs-5 text-uppercase rounded-1 ">Go for all events</button>
+            <a href="{{ route('events.all') }}" class="btn global_button mt-3 px-5 py-2 fs-5 text-uppercase rounded-1">Go for all events</a>
         </div>
     </div>
     <div class="item banner-slide">
@@ -66,7 +96,7 @@
         <div class="banner-overlay"></div>
         <div class="banner-text">
             <h2 class="text-uppercase">It's happening</h2>
-            <button class="btn global_button mt-3 px-5 py-2 fs-5 text-uppercase rounded-1 ">Go for all events</button>
+            <a href="{{ route('events.all') }}" class="btn global_button mt-3 px-5 py-2 fs-5 text-uppercase rounded-1">Go for all events</a>
         </div>
     </div>
 
@@ -75,7 +105,7 @@
         <div class="banner-overlay"></div>
         <div class="banner-text">
             <h2 class="text-uppercase">It's happening</h2>
-            <button class="btn global_button mt-3 px-5 py-2 fs-5 text-uppercase rounded-1 ">Go for all events</button>
+            <a href="{{ route('events.all') }}" class="btn global_button mt-3 px-5 py-2 fs-5 text-uppercase rounded-1">Go for all events</a>
         </div>
     </div>
 </div>
@@ -87,7 +117,7 @@
     <div class="d-flex align-items-center justify-content-between">
         <h2 class="mb-4 fw-bold">Open Events</h2>
         <div>
-            <a class="px-4 py-1 rounded-4 text-decoration-none fw-medium global_button-outline" href="{{ url('events.html') }}">See All</a>
+            <a class="px-4 py-1 rounded-4 text-decoration-none fw-medium global_button-outline" href="{{ route('events.all') }}">See All</a>
         </div>
     </div>
 
@@ -119,7 +149,7 @@
     <div class="d-flex align-items-center justify-content-between">
         <h2 class="mb-4 fw-bold ">Upcoming Events Events</h2>
         <div>
-            <a class="fw-medium text-decoration-none px-4 py-1 rounded-4 global_button-outline" href="{{ url('events.html') }}">See All</a>
+            <a class="fw-medium text-decoration-none px-4 py-1 rounded-4 global_button-outline" href="{{ route('events.upcoming') }}">See All</a>
         </div>
     </div>
     <div class="row">
@@ -144,7 +174,7 @@
     <div class="d-flex align-items-center justify-content-between">
         <h2 class="mb-4 fw-bold">Past Events</h2>
         <div>
-            <a class="text-decoration-none fw-medium px-4 py-1 rounded-4 global_button-outline" href="{{ url('events.html') }}">See All</a>
+            <a class="text-decoration-none fw-medium px-4 py-1 rounded-4 global_button-outline" href="{{ route('events.past') }}">See All</a>
         </div>
     </div>
     <div class="row">
