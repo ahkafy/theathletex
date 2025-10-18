@@ -88,7 +88,7 @@
                 <h5>Contact</h5>
                 <ul class="list-unstyled small">
                     <li><i class="bi bi-geo-alt me-2"></i>18/4, Pallabi Road, Dhaka 1216</li>
-                    <li><i class="bi bi-telephone me-2"></i>+880 1234-567890</li>
+                    <li><i class="bi bi-telephone me-2"></i>+880 1775269643</li>
                     <li><i class="bi bi-envelope me-2"></i>info@theathletex.net</li>
                     <li><i class="bi bi-card-text me-2"></i>Trade License: TRAD/DSCC/088847/2024</li>
                 </ul>
