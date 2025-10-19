@@ -223,9 +223,7 @@
                             </label>
                         </div>
                     @endforeach
-                            </label>
-                        </div>
-                    @endforeach
+
                 </div>
                 @error('tshirt_size')
                     <div class="invalid-feedback d-block">{{ $message }}</div>
