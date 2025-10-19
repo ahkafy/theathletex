@@ -193,37 +193,27 @@
 
             <div class="mb-3">
                 <label class="form-label text-muted fw-semibold">T-shirt <span class="text-danger">*</span></label>
-                <div class="d-flex flex-wrap gap-3">
-                    @foreach([
-                        'XS'    => 'XS (Chest-36", Length-25")',
-                        'S'     => 'S (Chest-38", Length-26")',
-                        'M'     => 'M (Chest-40", Length-27")',
-                        'L'     => 'L (Chest-42", Length-28")',
-                        'XL'    => 'XL (Chest-44", Length-29")',
-                        'XXL'   => 'XXL (Chest-46", Length-30")',
-                        '3XL'   => '3XL (Chest-48", Length-31")',
-                        '4XL'   => '4XL (Chest-50", Length-32")',
-                        '3-4Y'  => '3-4 Year\'s (Chest-26", Length-18")',
-                        '5-6Y'  => '5-6 Year\'s (Chest-28", Length-19")',
-                        '7-8Y'  => '7-8 Year\'s (Chest-30", Length-20")',
-                        '9-10Y' => '9-10 Year\'s (Chest-32", Length-21")',
-                        '11-12Y'=> '11-12 Year\'s (Chest-34", Length-22")',
-                    ] as $value => $label)
-                        @php $id = 'size' . preg_replace('/[^A-Za-z0-9]/', '', strtolower($value)); @endphp
-                        <div class="form-check">
-                            <input
-                                class="form-check-input @error('tshirt_size') is-invalid @enderror"
-                                type="radio"
-                                name="tshirt_size"
-                                id="{{ $id }}"
-                                value="{{ $value }}"
-                                {{ old('tshirt_size') == $value ? 'checked' : '' }}>
-                            <label class="form-check-label text-muted" for="{{ $id }}">
-                                {{ $label }}
-                            </label>
-                        </div>
-                    @endforeach
-
+                <div>
+                    <select class="form-select @error('tshirt_size') is-invalid @enderror" id="tshirt_size" name="tshirt_size" required>
+                        <option value="" disabled {{ old('tshirt_size') ? '' : 'selected' }}>Select T-shirt Size</option>
+                        @foreach([
+                            'XS'    => 'XS (Chest-36", Length-25")',
+                            'S'     => 'S (Chest-38", Length-26")',
+                            'M'     => 'M (Chest-40", Length-27")',
+                            'L'     => 'L (Chest-42", Length-28")',
+                            'XL'    => 'XL (Chest-44", Length-29")',
+                            'XXL'   => 'XXL (Chest-46", Length-30")',
+                            '3XL'   => '3XL (Chest-48", Length-31")',
+                            '4XL'   => '4XL (Chest-50", Length-32")',
+                            '3-4Y'  => '3-4 Year\'s (Chest-26", Length-18")',
+                            '5-6Y'  => '5-6 Year\'s (Chest-28", Length-19")',
+                            '7-8Y'  => '7-8 Year\'s (Chest-30", Length-20")',
+                            '9-10Y' => '9-10 Year\'s (Chest-32", Length-21")',
+                            '11-12Y'=> '11-12 Year\'s (Chest-34", Length-22")',
+                        ] as $value => $label)
+                            <option value="{{ $value }}" {{ old('tshirt_size') == $value ? 'selected' : '' }}>{{ $label }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 @error('tshirt_size')
                     <div class="invalid-feedback d-block">{{ $message }}</div>
