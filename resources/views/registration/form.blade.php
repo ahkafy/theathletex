@@ -194,20 +194,35 @@
             <div class="mb-3">
                 <label class="form-label text-muted fw-semibold">T-shirt <span class="text-danger">*</span></label>
                 <div class="d-flex flex-wrap gap-3">
-                    @foreach(['4XL','3XL','2XL','XL','L','M','S','XS'] as $size)
+                    @foreach([
+                        'XS'    => 'XS (Chest-36", Length-25")',
+                        'S'     => 'S (Chest-38", Length-26")',
+                        'M'     => 'M (Chest-40", Length-27")',
+                        'L'     => 'L (Chest-42", Length-28")',
+                        'XL'    => 'XL (Chest-44", Length-29")',
+                        'XXL'   => 'XXL (Chest-46", Length-30")',
+                        '3XL'   => '3XL (Chest-48", Length-31")',
+                        '4XL'   => '4XL (Chest-50", Length-32")',
+                        '3-4Y'  => '3-4 Year\'s (Chest-26", Length-18")',
+                        '5-6Y'  => '5-6 Year\'s (Chest-28", Length-19")',
+                        '7-8Y'  => '7-8 Year\'s (Chest-30", Length-20")',
+                        '9-10Y' => '9-10 Year\'s (Chest-32", Length-21")',
+                        '11-12Y'=> '11-12 Year\'s (Chest-34", Length-22")',
+                    ] as $value => $label)
+                        @php $id = 'size' . preg_replace('/[^A-Za-z0-9]/', '', strtolower($value)); @endphp
                         <div class="form-check">
-                            <input class="form-check-input @error('tshirt_size') is-invalid @enderror" type="radio" name="tshirt_size" id="size{{ strtolower($size) }}" value="{{ $size }}" {{ old('tshirt_size') == $size ? 'checked' : '' }}>
-                            <label class="form-check-label text-muted" for="size{{ strtolower($size) }}">
-                            @switch($size)
-                                @case('4XL') 4XL (C-50, L-31.5) @break
-                                @case('3XL') 3XL (C-48, L-31) @break
-                                @case('2XL') 2XL (C-46, L-30.5) @break
-                                @case('XL') XL (C-44, L-30) @break
-                                @case('L') L (C-42, L-29) @break
-                                @case('M') M (C-40, L-28) @break
-                                @case('S') S (C-38, L-27) @break
-                                @case('XS') XS (C-36, L-26) @break
-                            @endswitch
+                            <input
+                                class="form-check-input @error('tshirt_size') is-invalid @enderror"
+                                type="radio"
+                                name="tshirt_size"
+                                id="{{ $id }}"
+                                value="{{ $value }}"
+                                {{ old('tshirt_size') == $value ? 'checked' : '' }}>
+                            <label class="form-check-label text-muted" for="{{ $id }}">
+                                {{ $label }}
+                            </label>
+                        </div>
+                    @endforeach
                             </label>
                         </div>
                     @endforeach
