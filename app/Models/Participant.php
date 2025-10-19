@@ -26,18 +26,23 @@ class Participant extends Model
         'kit_option',
         'terms_agreed',
         'payment_method',
+        'additional_data',
+    ];
+
+    protected $casts = [
+        'additional_data' => 'array',
     ];
 
     /**
-     * Generate a unique participant ID with format: EventID + 8-digit serial
+     * Generate a unique participant ID with format: EventID + 7-digit serial
      */
     public static function generateParticipantId($eventId)
     {
         // Get the count of participants for this event
         $participantCount = self::where('event_id', $eventId)->count();
 
-        // Generate 8-digit serial number (starting from 00000001)
-        $serialNumber = str_pad($participantCount + 1, 8, '0', STR_PAD_LEFT);
+        // Generate 7-digit serial number (starting from 0000001)
+        $serialNumber = str_pad($participantCount + 1, 7, '0', STR_PAD_LEFT);
 
         // Combine event ID with serial number
         $participantId = $eventId . $serialNumber;
@@ -45,7 +50,7 @@ class Participant extends Model
         // Check if this ID already exists (unlikely but for safety)
         while (self::where('participant_id', $participantId)->exists()) {
             $participantCount++;
-            $serialNumber = str_pad($participantCount + 1, 8, '0', STR_PAD_LEFT);
+            $serialNumber = str_pad($participantCount + 1, 7, '0', STR_PAD_LEFT);
             $participantId = $eventId . $serialNumber;
         }
 

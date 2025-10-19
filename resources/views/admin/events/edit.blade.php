@@ -41,6 +41,70 @@
                                 $('.summernote').summernote({
                                     height: 200
                                 });
+
+                                // Additional Fields Management
+                                let fieldIndex = {{ $event->additional_fields ? count($event->additional_fields) : 0 }};
+
+                                $('#addFieldBtn').click(function() {
+                                    const fieldHtml = `
+                                        <div class="card mb-3 additional-field" data-index="${fieldIndex}">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <label class="form-label small">Field Label</label>
+                                                        <input type="text" name="additional_fields[${fieldIndex}][label]" class="form-control form-control-sm" placeholder="e.g., Blood Group" required>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="form-label small">Field Type</label>
+                                                        <select name="additional_fields[${fieldIndex}][type]" class="form-select form-select-sm">
+                                                            <option value="text">Text</option>
+                                                            <option value="email">Email</option>
+                                                            <option value="number">Number</option>
+                                                            <option value="tel">Phone</option>
+                                                            <option value="date">Date</option>
+                                                            <option value="textarea">Textarea</option>
+                                                            <option value="select">Dropdown</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="form-label small">Options (for dropdown)</label>
+                                                        <input type="text" name="additional_fields[${fieldIndex}][options]" class="form-control form-control-sm options-field" placeholder="A+,B+,O+,AB+" disabled>
+                                                        <small class="text-muted">Comma-separated</small>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <label class="form-label small d-block">&nbsp;</label>
+                                                        <div class="form-check">
+                                                            <input type="checkbox" name="additional_fields[${fieldIndex}][required]" class="form-check-input" value="1">
+                                                            <label class="form-check-label small">Required</label>
+                                                        </div>
+                                                        <button type="button" class="btn btn-sm btn-danger remove-field-btn mt-1">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                                    $('#additionalFieldsContainer').append(fieldHtml);
+                                    fieldIndex++;
+                                });
+
+                                // Remove field
+                                $(document).on('click', '.remove-field-btn', function() {
+                                    $(this).closest('.additional-field').remove();
+                                });
+
+                                // Enable/disable options field based on type
+                                $(document).on('change', 'select[name*="[type]"]', function() {
+                                    const $card = $(this).closest('.additional-field');
+                                    const $optionsField = $card.find('.options-field');
+
+                                    if ($(this).val() === 'select') {
+                                        $optionsField.prop('disabled', false).prop('required', true);
+                                    } else {
+                                        $optionsField.prop('disabled', true).prop('required', false).val('');
+                                    }
+                                });
                             });
                         </script>
                     @endpush
@@ -99,6 +163,61 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+
+                    <!-- Additional Registration Fields Section -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Additional Registration Fields (Optional)</label>
+                        <p class="text-muted small">Add custom fields that participants will fill during registration</p>
+
+                        <div id="additionalFieldsContainer">
+                            @if($event->additional_fields)
+                                @foreach($event->additional_fields as $index => $field)
+                                    <div class="card mb-3 additional-field" data-index="{{ $index }}">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label class="form-label small">Field Label</label>
+                                                    <input type="text" name="additional_fields[{{ $index }}][label]" class="form-control form-control-sm" placeholder="e.g., Blood Group" value="{{ $field['label'] }}" required>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="form-label small">Field Type</label>
+                                                    <select name="additional_fields[{{ $index }}][type]" class="form-select form-select-sm">
+                                                        <option value="text" {{ $field['type'] == 'text' ? 'selected' : '' }}>Text</option>
+                                                        <option value="email" {{ $field['type'] == 'email' ? 'selected' : '' }}>Email</option>
+                                                        <option value="number" {{ $field['type'] == 'number' ? 'selected' : '' }}>Number</option>
+                                                        <option value="tel" {{ $field['type'] == 'tel' ? 'selected' : '' }}>Phone</option>
+                                                        <option value="date" {{ $field['type'] == 'date' ? 'selected' : '' }}>Date</option>
+                                                        <option value="textarea" {{ $field['type'] == 'textarea' ? 'selected' : '' }}>Textarea</option>
+                                                        <option value="select" {{ $field['type'] == 'select' ? 'selected' : '' }}>Dropdown</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="form-label small">Options (for dropdown)</label>
+                                                    <input type="text" name="additional_fields[{{ $index }}][options]" class="form-control form-control-sm options-field" placeholder="A+,B+,O+,AB+" value="{{ isset($field['options']) ? implode(',', $field['options']) : '' }}" {{ $field['type'] != 'select' ? 'disabled' : '' }}>
+                                                    <small class="text-muted">Comma-separated</small>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label small d-block">&nbsp;</label>
+                                                    <div class="form-check">
+                                                        <input type="checkbox" name="additional_fields[{{ $index }}][required]" class="form-check-input" value="1" {{ ($field['required'] ?? false) ? 'checked' : '' }}>
+                                                        <label class="form-check-label small">Required</label>
+                                                    </div>
+                                                    <button type="button" class="btn btn-sm btn-danger remove-field-btn mt-1">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
+
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="addFieldBtn">
+                            <i class="bi bi-plus-circle"></i> Add Field
+                        </button>
+                    </div>
+
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary">Update Event</button>
                         <a href="{{ route('admin.events.index') }}" class="btn btn-secondary">Cancel</a>

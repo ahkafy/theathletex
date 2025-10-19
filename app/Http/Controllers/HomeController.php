@@ -11,7 +11,8 @@ class HomeController extends Controller
 
     public function index()
     {
-        $events = Event::with('fees')->where('status', 'active')->get();
+        // Get open events for homepage
+        $events = Event::with('fees')->where('status', 'open')->orderBy('start_time', 'desc')->get();
         return view('index', compact('events'));
     }
 

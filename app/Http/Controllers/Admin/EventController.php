@@ -50,6 +50,10 @@ class EventController extends Controller
             'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'venue' => 'nullable|string',
             'status' => 'string|in:scheduled,open,closed,complete',
+            'additional_fields.*.label' => 'nullable|string|max:255',
+            'additional_fields.*.type' => 'nullable|string|in:text,email,number,tel,date,textarea,select',
+            'additional_fields.*.options' => 'nullable|string',
+            'additional_fields.*.required' => 'nullable|boolean',
         ]);
 
         // Generate a slug from the event name
@@ -104,6 +108,28 @@ class EventController extends Controller
             $request->merge(['cover_photo' => null]);
         }
 
+        // Process additional fields
+        $additionalFields = null;
+        if ($request->has('additional_fields')) {
+            $fields = [];
+            foreach ($request->input('additional_fields') as $field) {
+                if (!empty($field['label'])) {
+                    $fieldData = [
+                        'label' => $field['label'],
+                        'type' => $field['type'],
+                        'required' => isset($field['required']) ? true : false,
+                    ];
+
+                    // Add options for select type
+                    if ($field['type'] === 'select' && !empty($field['options'])) {
+                        $fieldData['options'] = array_map('trim', explode(',', $field['options']));
+                    }
+
+                    $fields[] = $fieldData;
+                }
+            }
+            $additionalFields = !empty($fields) ? $fields : null;
+        }
 
         // Create the event
         // Prepare the data for event creation, ensuring only fillable fields are used
@@ -117,6 +143,7 @@ class EventController extends Controller
             'cover_photo' => $request->input('cover_photo'),
             'venue'       => $request->input('venue'),
             'status'      => $request->input('status'),
+            'additional_fields' => $additionalFields,
         ];
 
         // Create the event using the prepared data
@@ -202,6 +229,10 @@ class EventController extends Controller
             'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'venue' => 'nullable|string',
             'status' => 'string|in:scheduled,open,closed,complete',
+            'additional_fields.*.label' => 'nullable|string|max:255',
+            'additional_fields.*.type' => 'nullable|string|in:text,email,number,tel,date,textarea,select',
+            'additional_fields.*.options' => 'nullable|string',
+            'additional_fields.*.required' => 'nullable|boolean',
         ]);
 
         // Generate a slug from the event name if name changed
@@ -252,6 +283,29 @@ class EventController extends Controller
             $event->cover_photo = 'storage/' . $path;
         }
 
+        // Process additional fields
+        $additionalFields = null;
+        if ($request->has('additional_fields')) {
+            $fields = [];
+            foreach ($request->input('additional_fields') as $field) {
+                if (!empty($field['label'])) {
+                    $fieldData = [
+                        'label' => $field['label'],
+                        'type' => $field['type'],
+                        'required' => isset($field['required']) ? true : false,
+                    ];
+
+                    // Add options for select type
+                    if ($field['type'] === 'select' && !empty($field['options'])) {
+                        $fieldData['options'] = array_map('trim', explode(',', $field['options']));
+                    }
+
+                    $fields[] = $fieldData;
+                }
+            }
+            $additionalFields = !empty($fields) ? $fields : null;
+        }
+
         // Update the event with the validated data
         $event->update([
             'name' => $request->input('name'),
@@ -261,6 +315,7 @@ class EventController extends Controller
             'capacity' => $request->input('capacity'),
             'venue' => $request->input('venue'),
             'status' => $request->input('status'),
+            'additional_fields' => $additionalFields,
         ]);
 
         // Save the updated event (this will save the cover_photo if it was updated)

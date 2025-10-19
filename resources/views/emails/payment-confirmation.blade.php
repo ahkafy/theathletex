@@ -62,6 +62,7 @@
     <div class="order-details">
         <h3>[Order #{{ $transaction->id }} ({{ strtolower(str_replace(' ', '-', $event->name)) }}-{{ date('dmY', strtotime($transaction->created_at)) }})]</h3>
 
+        <p><strong>Participant ID:</strong> <span style="color: #007bff; font-weight: bold; font-size: 16px;">{{ $participant->participant_id }}</span></p>
         <p><strong>Event Category:</strong> {{ $participant->category ?? 'N/A' }}</p>
         <p class="total-amount"><strong>Total: ৳ {{ number_format($transaction->amount, 2) }}</strong></p>
     </div>

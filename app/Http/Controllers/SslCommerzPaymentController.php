@@ -68,12 +68,12 @@ class SslCommerzPaymentController extends Controller
         $currency = $request->input('currency');
 
         $sslc = new SslCommerzNotification();
-        
+
         $trxInfo = Transaction::where('id', $tran_id)->with(['participant', 'event'])->first();
 
         $participantPhone = $trxInfo->participant->phone;
-        
-        
+
+
         $validation = $sslc->orderValidate($request->all(), $tran_id, $amount, $currency);
 
 
@@ -88,7 +88,7 @@ class SslCommerzPaymentController extends Controller
         if ($check) {
 
             // Send SMS to participant
-            $msg = "Dear " . $trxInfo->participant->name . ", your payment of " . $trxInfo->amount . " " . $trxInfo->currency . " for the event has been successfully completed. Transaction ID: " . $tran_id . ". Thank you for your participation!";
+            $msg = "Dear " . $trxInfo->participant->name . ", your payment of " . $trxInfo->amount . " " . $trxInfo->currency . " for " . $trxInfo->event->name . " has been successfully completed. Your Participant ID: " . $trxInfo->participant->participant_id . ". Transaction ID: " . $tran_id . ". Thank you for your participation!";
             $this->smsSend($participantPhone, $msg);
 
             // Send confirmation email to participant
@@ -100,7 +100,7 @@ class SslCommerzPaymentController extends Controller
             }
 
            // echo "Transaction is successfully Completed";
-           
+
             return redirect()->route('payment.init', ['trxID' => $tran_id])
                 ->with('success', 'Transaction is successfully Completed');
         } else {

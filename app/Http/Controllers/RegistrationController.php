@@ -76,7 +76,17 @@ class RegistrationController extends Controller
 
     public function registerParticipant(Request $request, $eventID)
     {
-        $request->validate([
+        // Get event first to validate additional fields
+        $event = Event::where('id', $eventID)->with('fees')->first();
+
+        if (!$event) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['event' => 'Event not found.']);
+        }
+
+        // Base validation rules
+        $rules = [
             'reg_type' => 'required',
             'category' => 'required',
             'name' => 'required|string|max:255',
@@ -91,15 +101,44 @@ class RegistrationController extends Controller
             'nationality' => 'required|string|max:100',
             'tshirt_size' => 'required|string|max:10',
             'terms_agreed' => 'required|accepted',
-        ]);
+        ];
 
-        $event = Event::where('id', $eventID)->with('fees')->first();
+        // Add validation rules for additional fields
+        if ($event->additional_fields) {
+            foreach ($event->additional_fields as $field) {
+                $fieldLabel = $field['label'];
+                $fieldRules = [];
 
-        if (!$event) {
-            return redirect()->back()
-                ->withInput()
-                ->withErrors(['event' => 'Event not found.']);
+                if ($field['required'] ?? false) {
+                    $fieldRules[] = 'required';
+                } else {
+                    $fieldRules[] = 'nullable';
+                }
+
+                // Add type-specific validation
+                switch ($field['type']) {
+                    case 'email':
+                        $fieldRules[] = 'email';
+                        break;
+                    case 'number':
+                        $fieldRules[] = 'numeric';
+                        break;
+                    case 'tel':
+                        $fieldRules[] = 'string';
+                        break;
+                    case 'date':
+                        $fieldRules[] = 'date';
+                        break;
+                    default:
+                        $fieldRules[] = 'string';
+                        break;
+                }
+
+                $rules["additional_data.{$fieldLabel}"] = implode('|', $fieldRules);
+            }
         }
+
+        $request->validate($rules);
 
         $fee = $event->fees->where('id', $request->input('reg_type'))->first();
 
@@ -128,6 +167,12 @@ class RegistrationController extends Controller
         $participant->kit_option = $request->input('kit_option');
         $participant->terms_agreed = $request->input('terms_agreed');
         $participant->payment_method = $request->input('payment_method');
+
+        // Store additional data if present
+        if ($request->has('additional_data')) {
+            $participant->additional_data = $request->input('additional_data');
+        }
+
         // Add other fields as necessary
         $check = $participant->save();
 

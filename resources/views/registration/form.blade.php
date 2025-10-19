@@ -141,6 +141,56 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
+
+            @if($event->additional_fields && count($event->additional_fields) > 0)
+                <!-- Dynamic Additional Fields -->
+                <div class="border-top pt-3 mt-4 mb-3">
+                    <h6 class="fw-semibold text-muted mb-3">Additional Information</h6>
+                    @foreach($event->additional_fields as $index => $field)
+                        <div class="mb-3">
+                            <label for="additional_{{ $index }}" class="form-label">
+                                {{ $field['label'] }}
+                                @if($field['required'] ?? false)<span class="text-danger">*</span>@endif
+                            </label>
+
+                            @if($field['type'] === 'textarea')
+                                <textarea
+                                    name="additional_data[{{ $field['label'] }}]"
+                                    id="additional_{{ $index }}"
+                                    class="form-control @error('additional_data.'.$field['label']) is-invalid @enderror"
+                                    rows="3"
+                                    {{ ($field['required'] ?? false) ? 'required' : '' }}>{{ old('additional_data.'.$field['label']) }}</textarea>
+
+                            @elseif($field['type'] === 'select')
+                                <select
+                                    name="additional_data[{{ $field['label'] }}]"
+                                    id="additional_{{ $index }}"
+                                    class="form-select @error('additional_data.'.$field['label']) is-invalid @enderror"
+                                    {{ ($field['required'] ?? false) ? 'required' : '' }}>
+                                    <option value="">Select {{ $field['label'] }}</option>
+                                    @foreach($field['options'] as $option)
+                                        <option value="{{ $option }}" {{ old('additional_data.'.$field['label']) == $option ? 'selected' : '' }}>{{ $option }}</option>
+                                    @endforeach
+                                </select>
+
+                            @else
+                                <input
+                                    type="{{ $field['type'] }}"
+                                    name="additional_data[{{ $field['label'] }}]"
+                                    id="additional_{{ $index }}"
+                                    class="form-control @error('additional_data.'.$field['label']) is-invalid @enderror"
+                                    value="{{ old('additional_data.'.$field['label']) }}"
+                                    {{ ($field['required'] ?? false) ? 'required' : '' }}>
+                            @endif
+
+                            @error('additional_data.'.$field['label'])
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+
             <div class="mb-3">
                 <label class="form-label text-muted fw-semibold">T-shirt <span class="text-danger">*</span></label>
                 <div class="d-flex flex-wrap gap-3">

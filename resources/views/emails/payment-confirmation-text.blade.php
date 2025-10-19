@@ -6,6 +6,7 @@ Just to let you know — we've received your order #{{ $transaction->id }} ({{ $
 
 [Order #{{ $transaction->id }} ({{ strtolower(str_replace(' ', '-', $event->name)) }}-{{ date('dmY', strtotime($transaction->created_at)) }})]
 
+Participant ID: {{ $participant->participant_id }}
 Event Category: {{ $participant->category ?? 'N/A' }}
 Total: ৳ {{ number_format($transaction->amount, 2) }}
 
