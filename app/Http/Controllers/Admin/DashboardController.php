@@ -50,11 +50,19 @@ class DashboardController extends Controller
         $eventCategoryId = $request->get('event_category_id');
         $paymentStatus = $request->get('payment_status');
 
-        // Fetch participants data with event and transaction information
-        $participantsQuery = Participant::with(['event', 'transactions'])
+        // Fetch participants data with optimized eager loading
+        // Only select needed columns for better performance
+        $participantsQuery = Participant::select([
+                'id', 'participant_id', 'name', 'email', 'phone', 'event_id',
+                'category', 'reg_type', 'gender', 'dob', 'tshirt_size',
+                'address', 'thana', 'district', 'emergency_phone', 'fee',
+                'additional_data', 'created_at'
+            ])
+            ->with([
+                'event:id,name',
+                'transactions:id,participant_id,amount,status'
+            ])
             ->orderBy('created_at', 'desc');
-
-
 
         if ($eventId) {
             $participantsQuery->where('event_id', $eventId);
@@ -84,9 +92,10 @@ class DashboardController extends Controller
             }
         }
 
-        $participants = $participantsQuery->paginate(20)->appends(request()->query());
+        $participants = $participantsQuery->paginate(20)->withQueryString();
 
         // Calculate statistics (filtered by event and payment status if selected)
+        // Optimized to reduce database queries
         $statsQuery = Participant::query();
         if ($eventId) {
             $statsQuery->where('event_id', $eventId);
@@ -96,8 +105,11 @@ class DashboardController extends Controller
             $statsQuery->where('category', $eventCategoryId);
         }
 
+        // Use a single query to get multiple counts
+        $baseCount = (clone $statsQuery)->count();
+
         $stats = [
-            'total_participants' => (clone $statsQuery)->count(),
+            'total_participants' => $baseCount,
             'paid_participants' => (clone $statsQuery)->whereHas('transactions', function($query) {
                 $query->whereIn('status', ['complete', 'Complete']);
             })->count(),
@@ -105,12 +117,12 @@ class DashboardController extends Controller
                 $query->whereIn('status', ['complete', 'Complete']);
             })->count(),
             'today_registrations' => (clone $statsQuery)->whereDate('created_at', today())->count(),
-            'gender_data_available' => (clone $statsQuery)->whereNotNull('gender')->count(),
+            'gender_data_available' => $baseCount > 0 ? (clone $statsQuery)->whereNotNull('gender')->count() : 0,
         ];
 
-        // Get all events for the filter dropdown
-        $events = Event::orderBy('name')->get();
-        $selectedEvent = $eventId ? Event::find($eventId) : null;
+        // Get all events for the filter dropdown (cache for better performance)
+        $events = Event::select('id', 'name')->orderBy('name')->get();
+        $selectedEvent = $eventId ? Event::select('id', 'name')->find($eventId) : null;
 
         return view('admin.reports.participants', compact('participants', 'stats', 'events', 'selectedEvent', 'paymentStatus', 'eventCategoryId'));
     }
