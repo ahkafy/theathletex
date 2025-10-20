@@ -177,6 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <th>Participant Info</th>
                             <th>Event</th>
                             <th>Personal Details</th>
+                            <th>Additional Fields</th>
                             <th>Address</th>
                             <th>Registration</th>
                             <th>Payment Status</th>
@@ -215,6 +216,32 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <strong>DOB:</strong> {{ $participant->dob ? \Carbon\Carbon::parse($participant->dob)->format('M d, Y') : 'N/A' }}<br>
                                         <strong>T-Shirt:</strong> {{ $participant->tshirt_size ?? 'N/A' }}
                                     </small>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    @if($participant->additional_data && count($participant->additional_data) > 0)
+                                        <small>
+                                            @php
+                                                $additionalCount = count($participant->additional_data);
+                                                $firstThree = array_slice($participant->additional_data, 0, 3, true);
+                                            @endphp
+                                            @foreach($firstThree as $key => $value)
+                                                <strong>{{ ucwords(str_replace('_', ' ', $key)) }}:</strong>
+                                                @if(is_array($value))
+                                                    {{ implode(', ', array_slice($value, 0, 2)) }}{{ count($value) > 2 ? '...' : '' }}
+                                                @else
+                                                    {{ strlen($value) > 30 ? substr($value, 0, 30) . '...' : $value }}
+                                                @endif
+                                                <br>
+                                            @endforeach
+                                            @if($additionalCount > 3)
+                                                <span class="badge bg-secondary">+{{ $additionalCount - 3 }} more</span>
+                                            @endif
+                                        </small>
+                                    @else
+                                        <small class="text-muted">No additional fields</small>
+                                    @endif
                                 </div>
                             </td>
                             <td>
@@ -267,7 +294,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="9" class="text-center text-muted">No participants found</td>
+                            <td colspan="10" class="text-center text-muted">No participants found</td>
                         </tr>
                         @endforelse
                     </tbody>
