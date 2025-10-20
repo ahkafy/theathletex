@@ -18,6 +18,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Reports Routes
         Route::get('/reports/participants', [DashboardController::class, 'participants'])->name('reports.participants');
+        Route::get('/reports/participants/{id}', [DashboardController::class, 'viewParticipant'])->name('reports.participant.view');
         Route::get('/reports/transactions', [DashboardController::class, 'transactions'])->name('reports.transactions');
         Route::get('/reports/events', [DashboardController::class, 'events'])->name('reports.events');
         Route::get('/reports/revenue', [DashboardController::class, 'revenue'])->name('reports.revenue');

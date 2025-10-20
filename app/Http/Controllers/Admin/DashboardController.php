@@ -112,8 +112,14 @@ class DashboardController extends Controller
         $events = Event::orderBy('name')->get();
         $selectedEvent = $eventId ? Event::find($eventId) : null;
 
-        return view('admin.reports.participants', compact('participants', 'stats', 'events', 'selectedEvent', 'paymentStatus'));
         return view('admin.reports.participants', compact('participants', 'stats', 'events', 'selectedEvent', 'paymentStatus', 'eventCategoryId'));
+    }
+
+    public function viewParticipant($id)
+    {
+        $participant = Participant::with(['event', 'transactions'])->findOrFail($id);
+
+        return view('admin.reports.participant-details', compact('participant'));
     }
 
     public function transactions(Request $request)
@@ -281,12 +287,17 @@ class DashboardController extends Controller
     {
         $eventId = $request->get('event_id');
         $paymentStatus = $request->get('payment_status');
+        $eventCategoryId = $request->get('event_category_id');
 
         // Export participants data as CSV
         $participantsQuery = Participant::with(['event', 'transactions']);
 
         if ($eventId) {
             $participantsQuery->where('event_id', $eventId);
+        }
+
+        if ($eventCategoryId) {
+            $participantsQuery->where('category', $eventCategoryId);
         }
 
         // Filter by payment status
@@ -310,16 +321,54 @@ class DashboardController extends Controller
 
         $participants = $participantsQuery->get();
 
-        // Create more detailed CSV header
-        $csvData = "Name,Email,Phone,Event,Category,Registration Type,Gender,Date of Birth,T-Shirt Size,Address,Thana,District,Emergency Contact,Registration Date,Payment Status,Total Paid,Fee Amount\n";
+        // Collect all unique additional field keys from all participants
+        $additionalFieldKeys = [];
+        foreach ($participants as $participant) {
+            if ($participant->additional_data && is_array($participant->additional_data)) {
+                $additionalFieldKeys = array_merge($additionalFieldKeys, array_keys($participant->additional_data));
+            }
+        }
+        $additionalFieldKeys = array_unique($additionalFieldKeys);
+        sort($additionalFieldKeys);
+
+        // Build CSV header with standard fields + additional fields
+        $headers = [
+            'Participant ID',
+            'Name',
+            'Email',
+            'Phone',
+            'Event',
+            'Category',
+            'Registration Type',
+            'Gender',
+            'Date of Birth',
+            'Nationality',
+            'T-Shirt Size',
+            'Kit Option',
+            'Address',
+            'Thana',
+            'District',
+            'Emergency Contact',
+            'Registration Date',
+            'Payment Status',
+            'Total Paid',
+            'Fee Amount'
+        ];
+
+        // Add additional field headers
+        foreach ($additionalFieldKeys as $key) {
+            $headers[] = ucwords(str_replace('_', ' ', $key));
+        }
+
+        $csvData = implode(',', array_map(function($h) { return '"' . $h . '"'; }, $headers)) . "\n";
 
         foreach ($participants as $participant) {
             $paymentStatusText = $participant->transactions->whereIn('status', ['complete', 'Complete'])->count() > 0 ? 'Paid' : 'Pending';
             $totalPaid = $participant->transactions->whereIn('status', ['complete', 'Complete'])->sum('amount');
             $eventName = $participant->event ? $participant->event->name : 'No Event';
 
-            $csvData .= sprintf(
-                "\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%.2f\",\"%.2f\"\n",
+            $row = [
+                $participant->participant_id ?: 'N/A',
                 $participant->name ?: '',
                 $participant->email ?: '',
                 $participant->phone ?: '',
@@ -328,16 +377,35 @@ class DashboardController extends Controller
                 ucfirst($participant->reg_type ?: 'N/A'),
                 ucfirst($participant->gender ?: 'N/A'),
                 $participant->dob ? \Carbon\Carbon::parse($participant->dob)->format('Y-m-d') : 'N/A',
+                $participant->nationality ?: 'N/A',
                 $participant->tshirt_size ?: 'N/A',
+                $participant->kit_option ?: 'N/A',
                 $participant->address ?: '',
                 $participant->thana ?: '',
                 $participant->district ?: '',
                 $participant->emergency_phone ?: 'N/A',
                 $participant->created_at->format('Y-m-d H:i:s'),
                 $paymentStatusText,
-                $totalPaid,
-                $participant->fee ?: 0
-            );
+                number_format($totalPaid, 2),
+                number_format($participant->fee ?: 0, 2)
+            ];
+
+            // Add additional field values
+            foreach ($additionalFieldKeys as $key) {
+                $value = 'N/A';
+                if ($participant->additional_data && is_array($participant->additional_data) && isset($participant->additional_data[$key])) {
+                    $value = $participant->additional_data[$key];
+                    // Handle arrays (like multi-select fields)
+                    if (is_array($value)) {
+                        $value = implode('; ', $value);
+                    }
+                }
+                $row[] = $value;
+            }
+
+            $csvData .= implode(',', array_map(function($v) {
+                return '"' . str_replace('"', '""', $v) . '"';
+            }, $row)) . "\n";
         }
 
         // Generate descriptive filename
@@ -351,6 +419,10 @@ class DashboardController extends Controller
             $filenameParts[] = 'all_events';
         }
 
+        if ($eventCategoryId) {
+            $filenameParts[] = 'category_' . $eventCategoryId;
+        }
+
         if ($paymentStatus) {
             $filenameParts[] = $paymentStatus;
         }
@@ -359,7 +431,7 @@ class DashboardController extends Controller
         $filename = implode('_', $filenameParts) . '.csv';
 
         return response($csvData)
-            ->header('Content-Type', 'text/csv')
+            ->header('Content-Type', 'text/csv; charset=utf-8')
             ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 

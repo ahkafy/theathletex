@@ -173,6 +173,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <thead>
                         <tr>
                             <th>#</th>
+                            <th>Participant ID</th>
                             <th>Participant Info</th>
                             <th>Event</th>
                             <th>Personal Details</th>
@@ -186,6 +187,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         @forelse($participants as $index => $participant)
                         <tr>
                             <td>{{ ($participants->currentPage() - 1) * $participants->perPage() + $index + 1 }}</td>
+                            <td>
+                                <strong class="text-primary">{{ $participant->participant_id ?? 'N/A' }}</strong>
+                            </td>
                             <td>
                                 <div>
                                     <strong>{{ $participant->name }}</strong><br>
@@ -244,7 +248,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                 @endif
                             </td>
                             <td>
-                                <div class="btn-group-vertical" role="group">
+                                <div class="btn-group-vertical btn-group-sm" role="group">
+                                    <a href="{{ route('admin.reports.participant.view', $participant->id) }}" class="btn btn-sm btn-info text-white" title="View Full Details">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
                                     @if($participant->email)
                                     <a href="mailto:{{ $participant->email }}" class="btn btn-sm btn-outline-primary" title="Send Email">
                                         <i class="fas fa-envelope"></i>
@@ -260,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="8" class="text-center text-muted">No participants found</td>
+                            <td colspan="9" class="text-center text-muted">No participants found</td>
                         </tr>
                         @endforelse
                     </tbody>
