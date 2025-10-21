@@ -65,11 +65,9 @@ class RegistrationController extends Controller
         if (!$event) {
             return redirect('/')->with('error', 'Event not found');
         }
-        $verifiedPhone = session('phone');
-        if (!$verifiedPhone) {
-            return redirect()->route('otp.form', ['eventID' => $eventID])
-                ->with('error', 'Please verify your phone number first.');
-        }
+
+        // Skip phone verification - allow direct registration
+        $verifiedPhone = session('phone', ''); // Get phone from session if available, otherwise empty
 
         return view('registration.form', compact('eventID', 'event', 'verifiedPhone'));
     }

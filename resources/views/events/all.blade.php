@@ -55,7 +55,7 @@
                                 @endif
                                 <div class="mt-auto">
                                     @if(\Carbon\Carbon::parse($event->start_time) > now())
-                                        <a href="{{ route('otp.form', $event->id) }}" class="btn global_button mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase">Register Now</a>
+                                        <a href="{{ route('register.create', $event->id) }}" class="btn global_button mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase">Register Now</a>
                                     @elseif(\Carbon\Carbon::parse($event->end_time) < now())
                                         <a href="{{ url('#') }}" class="btn btn-secondary mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase">View Results</a>
                                     @else

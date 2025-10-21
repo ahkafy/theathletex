@@ -134,7 +134,7 @@
                     <div class="card-body p-0">
                         <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Status:</span> {{ $event->status }}</p>
                         <p class="mb-1 px-3 pb-3"><span class="fw-semibold">Date:</span> {{ $event->start_time }}</p>
-                        <a href="{{ route('otp.form', $event->id) }}" class="btn global_button mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase">Register Now</a>
+                        <a href="{{ route('register.create', $event->id) }}" class="btn global_button mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase">Register Now</a>
                     </div>
                 </div>
             @endforeach

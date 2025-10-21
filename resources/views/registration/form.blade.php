@@ -71,7 +71,7 @@
             </div>
             <div class="mb-3">
                 <label for="phone" class="form-label">Phone Number*</label>
-                <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" required readonly value="{{ old('phone', $verifiedPhone ?? '') }}">
+                <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" required value="{{ old('phone', $verifiedPhone ?? '') }}" placeholder="Enter your phone number">
                 @error('phone')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror

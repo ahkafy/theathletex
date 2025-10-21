@@ -69,7 +69,7 @@
                                     <p class="mb-1 px-3"><span class="fw-semibold">Capacity:</span> {{ $event->capacity }} participants</p>
                                 @endif
                                 <div class="mt-auto">
-                                    <a href="{{ route('otp.form', $event->id) }}" class="btn global_button mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase">Register Now</a>
+                                    <a href="{{ route('register.create', $event->id) }}" class="btn global_button mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase">Register Now</a>
                                 </div>
                             </div>
                         </div>
