@@ -525,4 +525,112 @@ class DashboardController extends Controller
             ->header('Content-Type', 'text/csv')
             ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
+
+    public function sendConfirmationEmails(Request $request)
+    {
+        try {
+            $participantIds = $request->input('participant_ids', []);
+            $sendToAll = $request->input('send_to_all', false);
+
+            // Get filters from request for "send to all" functionality
+            $eventId = $request->input('event_id');
+            $eventCategoryId = $request->input('event_category_id');
+            $paymentStatus = $request->input('payment_status');
+
+            if ($sendToAll) {
+                // Build query with same filters as the participants list
+                $participantsQuery = Participant::query()
+                    ->with(['event', 'transactions'])
+                    ->whereHas('transactions', function($query) {
+                        $query->whereIn('status', ['complete', 'Complete']);
+                    });
+
+                if ($eventId) {
+                    $participantsQuery->where('event_id', $eventId);
+                }
+
+                if ($eventCategoryId) {
+                    $participantsQuery->where('category', $eventCategoryId);
+                }
+
+                if ($paymentStatus) {
+                    if ($paymentStatus === 'paid') {
+                        $participantsQuery->whereHas('transactions', function($query) {
+                            $query->whereIn('status', ['complete', 'Complete']);
+                        });
+                    } elseif ($paymentStatus === 'pending') {
+                        // Don't send to pending participants
+                        return redirect()->back()->with('error', 'Cannot send confirmation emails to participants with pending payments.');
+                    } elseif ($paymentStatus === 'failed') {
+                        // Don't send to failed participants
+                        return redirect()->back()->with('error', 'Cannot send confirmation emails to participants with failed payments.');
+                    }
+                }
+
+                $participants = $participantsQuery->get();
+            } else {
+                // Get selected participants
+                $participants = Participant::with(['event', 'transactions'])
+                    ->whereIn('id', $participantIds)
+                    ->whereHas('transactions', function($query) {
+                        $query->whereIn('status', ['complete', 'Complete']);
+                    })
+                    ->get();
+            }
+
+            if ($participants->isEmpty()) {
+                return redirect()->back()->with('error', 'No participants with completed payments found.');
+            }
+
+            $successCount = 0;
+            $failCount = 0;
+            $errors = [];
+
+            foreach ($participants as $participant) {
+                try {
+                    // Get the latest successful transaction for this participant
+                    $transaction = $participant->transactions()
+                        ->whereIn('status', ['complete', 'Complete'])
+                        ->latest()
+                        ->first();
+
+                    if ($transaction) {
+                        \Mail::to($participant->email)->send(new \App\Mail\PaymentConfirmation($transaction));
+                        $successCount++;
+                    } else {
+                        $failCount++;
+                        $errors[] = "No completed transaction found for {$participant->name}";
+                    }
+                } catch (\Exception $e) {
+                    $failCount++;
+                    $errors[] = "Failed to send email to {$participant->name} ({$participant->email}): " . $e->getMessage();
+                    \Log::error('Failed to send confirmation email', [
+                        'participant_id' => $participant->id,
+                        'email' => $participant->email,
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            }
+
+            // Prepare success message
+            $message = "Successfully sent {$successCount} confirmation email(s).";
+            if ($failCount > 0) {
+                $message .= " {$failCount} email(s) failed to send.";
+            }
+
+            if (!empty($errors) && $failCount <= 5) {
+                // Show specific errors if there are only a few
+                $message .= " Errors: " . implode('; ', $errors);
+            }
+
+            return redirect()->back()->with('success', $message);
+
+        } catch (\Exception $e) {
+            \Log::error('Error in sendConfirmationEmails', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
+        }
+    }
 }

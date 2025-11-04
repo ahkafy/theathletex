@@ -165,29 +165,70 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- Participants Table -->
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title mb-0">All Participants</h5>
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">All Participants</h5>
+                <div id="bulkActions" class="d-none">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="sendSelectedEmails()">
+                        <i class="fas fa-envelope me-1"></i>Send Email to Selected
+                    </button>
+                    <button type="button" class="btn btn-info btn-sm" onclick="sendAllEmails()">
+                        <i class="fas fa-paper-plane me-1"></i>Send Email to All (Filtered)
+                    </button>
+                </div>
+            </div>
         </div>
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Participant ID</th>
-                            <th>Participant Info</th>
-                            <th>Event</th>
-                            <th>Personal Details</th>
-                            <th>Additional Fields</th>
-                            <th>Address</th>
-                            <th>Registration</th>
-                            <th>Payment Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($participants as $index => $participant)
-                        <tr>
-                            <td>{{ ($participants->currentPage() - 1) * $participants->perPage() + $index + 1 }}</td>
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            <form id="emailForm" method="POST" action="{{ route('admin.send.confirmation.emails') }}">
+                @csrf
+                <input type="hidden" name="send_to_all" id="sendToAll" value="0">
+                <input type="hidden" name="event_id" value="{{ request('event_id') }}">
+                <input type="hidden" name="event_category_id" value="{{ request('event_category_id') }}">
+                <input type="hidden" name="payment_status" value="{{ request('payment_status') }}">
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)">
+                                </th>
+                                <th>#</th>
+                                <th>Participant ID</th>
+                                <th>Participant Info</th>
+                                <th>Event</th>
+                                <th>Personal Details</th>
+                                <th>Additional Fields</th>
+                                <th>Address</th>
+                                <th>Registration</th>
+                                <th>Payment Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($participants as $index => $participant)
+                            @php
+                                $hasPaidTransaction = $participant->transactions->whereIn('status', ['complete', 'Complete'])->isNotEmpty();
+                            @endphp
+                            <tr>
+                                <td>
+                                    @if($hasPaidTransaction)
+                                        <input type="checkbox" name="participant_ids[]" value="{{ $participant->id }}" class="participant-checkbox" onchange="toggleBulkActions()">
+                                    @endif
+                                </td>
+                                <td>{{ ($participants->currentPage() - 1) * $participants->perPage() + $index + 1 }}</td>
                             <td>
                                 <strong class="text-primary">{{ $participant->participant_id ?? 'N/A' }}</strong>
                             </td>
@@ -294,11 +335,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="10" class="text-center text-muted">No participants found</td>
+                            <td colspan="11" class="text-center text-muted">No participants found</td>
                         </tr>
                         @endforelse
                     </tbody>
                 </table>
+            </form>
             </div>
 
             <!-- Pagination -->
@@ -308,4 +350,77 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 </div>
+
+<script>
+function toggleSelectAll(checkbox) {
+    const checkboxes = document.querySelectorAll('.participant-checkbox');
+    checkboxes.forEach(cb => cb.checked = checkbox.checked);
+    toggleBulkActions();
+}
+
+function toggleBulkActions() {
+    const checkboxes = document.querySelectorAll('.participant-checkbox:checked');
+    const bulkActions = document.getElementById('bulkActions');
+
+    if (checkboxes.length > 0) {
+        bulkActions.classList.remove('d-none');
+    } else {
+        bulkActions.classList.add('d-none');
+    }
+}
+
+function sendSelectedEmails() {
+    const checkboxes = document.querySelectorAll('.participant-checkbox:checked');
+
+    if (checkboxes.length === 0) {
+        alert('Please select at least one participant.');
+        return;
+    }
+
+    if (confirm(`Are you sure you want to send payment confirmation emails to ${checkboxes.length} selected participant(s)?`)) {
+        document.getElementById('sendToAll').value = '0';
+        document.getElementById('emailForm').submit();
+    }
+}
+
+function sendAllEmails() {
+    const totalParticipants = {{ $stats['paid_participants'] ?? 0 }};
+
+    if (totalParticipants === 0) {
+        alert('No paid participants found to send emails to.');
+        return;
+    }
+
+    const filterText = getFilterDescription();
+    const confirmMessage = `Are you sure you want to send payment confirmation emails to ALL ${totalParticipants} paid participant(s)${filterText}?\n\nThis action cannot be undone.`;
+
+    if (confirm(confirmMessage)) {
+        document.getElementById('sendToAll').value = '1';
+        // Uncheck all individual checkboxes since we're sending to all
+        document.querySelectorAll('.participant-checkbox').forEach(cb => cb.checked = false);
+        document.getElementById('emailForm').submit();
+    }
+}
+
+function getFilterDescription() {
+    const eventId = '{{ request("event_id") }}';
+    const category = '{{ request("event_category_id") }}';
+    const status = '{{ request("payment_status") }}';
+
+    let description = '';
+
+    if (eventId) {
+        description += ' for the selected event';
+    }
+    if (category) {
+        description += ' in category "' + category + '"';
+    }
+    if (status === 'paid') {
+        description += ' (paid only)';
+    }
+
+    return description;
+}
+</script>
+
 @endsection

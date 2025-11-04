@@ -31,6 +31,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/export/participants', [DashboardController::class, 'exportParticipants'])->name('export.participants');
         Route::get('/export/transactions', [DashboardController::class, 'exportTransactions'])->name('export.transactions');
 
+        // Email Routes
+        Route::post('/send-confirmation-emails', [DashboardController::class, 'sendConfirmationEmails'])->name('send.confirmation.emails');
+
         // Events Routes
         Route::get('/events', [EventController::class, 'index'])->name('events.index');
         Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
