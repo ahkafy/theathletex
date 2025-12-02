@@ -49,6 +49,9 @@ class DashboardController extends Controller
         $eventId = $request->get('event_id');
         $eventCategoryId = $request->get('event_category_id');
         $paymentStatus = $request->get('payment_status');
+        $search = $request->get('search');
+        $dateFrom = $request->get('date_from');
+        $dateTo = $request->get('date_to');
 
         // Fetch participants data with optimized eager loading
         // Only select needed columns for better performance
@@ -66,6 +69,24 @@ class DashboardController extends Controller
 
         if ($eventId) {
             $participantsQuery->where('event_id', $eventId);
+        }
+
+        // Search filter
+        if ($search) {
+            $participantsQuery->where(function($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                      ->orWhere('email', 'like', '%' . $search . '%')
+                      ->orWhere('phone', 'like', '%' . $search . '%')
+                      ->orWhere('participant_id', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Date range filter
+        if ($dateFrom) {
+            $participantsQuery->whereDate('created_at', '>=', $dateFrom);
+        }
+        if ($dateTo) {
+            $participantsQuery->whereDate('created_at', '<=', $dateTo);
         }
 
         // Filter by event category
@@ -105,6 +126,24 @@ class DashboardController extends Controller
             $statsQuery->where('category', $eventCategoryId);
         }
 
+        // Apply search filter to stats
+        if ($search) {
+            $statsQuery->where(function($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                      ->orWhere('email', 'like', '%' . $search . '%')
+                      ->orWhere('phone', 'like', '%' . $search . '%')
+                      ->orWhere('participant_id', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Apply date range filter to stats
+        if ($dateFrom) {
+            $statsQuery->whereDate('created_at', '>=', $dateFrom);
+        }
+        if ($dateTo) {
+            $statsQuery->whereDate('created_at', '<=', $dateTo);
+        }
+
         // Use a single query to get multiple counts
         $baseCount = (clone $statsQuery)->count();
 
@@ -138,6 +177,9 @@ class DashboardController extends Controller
     {
         $eventId = $request->get('event_id');
         $paymentStatus = $request->get('payment_status');
+        $search = $request->get('search');
+        $dateFrom = $request->get('date_from');
+        $dateTo = $request->get('date_to');
 
         // Transaction reports with filtering options
         $transactionsQuery = Transaction::with(['participant', 'event'])
@@ -145,6 +187,28 @@ class DashboardController extends Controller
 
         if ($eventId) {
             $transactionsQuery->where('event_id', $eventId);
+        }
+
+        // Search filter
+        if ($search) {
+            $transactionsQuery->where(function($query) use ($search) {
+                $query->where('transaction_id', 'like', '%' . $search . '%')
+                      ->orWhere('gateway_transaction_id', 'like', '%' . $search . '%')
+                      ->orWhereHas('participant', function($q) use ($search) {
+                          $q->where('name', 'like', '%' . $search . '%')
+                            ->orWhere('email', 'like', '%' . $search . '%')
+                            ->orWhere('phone', 'like', '%' . $search . '%')
+                            ->orWhere('participant_id', 'like', '%' . $search . '%');
+                      });
+            });
+        }
+
+        // Date range filter
+        if ($dateFrom) {
+            $transactionsQuery->whereDate('created_at', '>=', $dateFrom);
+        }
+        if ($dateTo) {
+            $transactionsQuery->whereDate('created_at', '<=', $dateTo);
         }
 
         // Filter by payment status
@@ -171,6 +235,38 @@ class DashboardController extends Controller
             $pendingQuery->where('event_id', $eventId);
             $failedQuery->where('event_id', $eventId);
             $todayQuery->where('event_id', $eventId);
+        }
+
+        // Apply search filter to stats
+        if ($search) {
+            $searchFilter = function($query) use ($search) {
+                $query->where('transaction_id', 'like', '%' . $search . '%')
+                      ->orWhere('gateway_transaction_id', 'like', '%' . $search . '%')
+                      ->orWhereHas('participant', function($q) use ($search) {
+                          $q->where('name', 'like', '%' . $search . '%')
+                            ->orWhere('email', 'like', '%' . $search . '%')
+                            ->orWhere('phone', 'like', '%' . $search . '%')
+                            ->orWhere('participant_id', 'like', '%' . $search . '%');
+                      });
+            };
+            $revenueQuery->where($searchFilter);
+            $pendingQuery->where($searchFilter);
+            $failedQuery->where($searchFilter);
+            $todayQuery->where($searchFilter);
+        }
+
+        // Apply date range filter to stats
+        if ($dateFrom) {
+            $revenueQuery->whereDate('created_at', '>=', $dateFrom);
+            $pendingQuery->whereDate('created_at', '>=', $dateFrom);
+            $failedQuery->whereDate('created_at', '>=', $dateFrom);
+            $todayQuery->whereDate('created_at', '>=', $dateFrom);
+        }
+        if ($dateTo) {
+            $revenueQuery->whereDate('created_at', '<=', $dateTo);
+            $pendingQuery->whereDate('created_at', '<=', $dateTo);
+            $failedQuery->whereDate('created_at', '<=', $dateTo);
+            $todayQuery->whereDate('created_at', '<=', $dateTo);
         }
 
         $totalRevenue = $revenueQuery->sum('amount');
@@ -300,6 +396,9 @@ class DashboardController extends Controller
         $eventId = $request->get('event_id');
         $paymentStatus = $request->get('payment_status');
         $eventCategoryId = $request->get('event_category_id');
+        $search = $request->get('search');
+        $dateFrom = $request->get('date_from');
+        $dateTo = $request->get('date_to');
 
         // Export participants data as CSV
         $participantsQuery = Participant::with(['event', 'transactions']);
@@ -310,6 +409,24 @@ class DashboardController extends Controller
 
         if ($eventCategoryId) {
             $participantsQuery->where('category', $eventCategoryId);
+        }
+
+        // Search filter
+        if ($search) {
+            $participantsQuery->where(function($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                      ->orWhere('email', 'like', '%' . $search . '%')
+                      ->orWhere('phone', 'like', '%' . $search . '%')
+                      ->orWhere('participant_id', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Date range filter
+        if ($dateFrom) {
+            $participantsQuery->whereDate('created_at', '>=', $dateFrom);
+        }
+        if ($dateTo) {
+            $participantsQuery->whereDate('created_at', '<=', $dateTo);
         }
 
         // Filter by payment status
@@ -451,12 +568,37 @@ class DashboardController extends Controller
     {
         $eventId = $request->get('event_id');
         $paymentStatus = $request->get('payment_status');
+        $search = $request->get('search');
+        $dateFrom = $request->get('date_from');
+        $dateTo = $request->get('date_to');
 
         // Export transactions data as CSV
         $transactionsQuery = Transaction::with(['participant', 'event']);
 
         if ($eventId) {
             $transactionsQuery->where('event_id', $eventId);
+        }
+
+        // Search filter
+        if ($search) {
+            $transactionsQuery->where(function($query) use ($search) {
+                $query->where('transaction_id', 'like', '%' . $search . '%')
+                      ->orWhere('gateway_transaction_id', 'like', '%' . $search . '%')
+                      ->orWhereHas('participant', function($q) use ($search) {
+                          $q->where('name', 'like', '%' . $search . '%')
+                            ->orWhere('email', 'like', '%' . $search . '%')
+                            ->orWhere('phone', 'like', '%' . $search . '%')
+                            ->orWhere('participant_id', 'like', '%' . $search . '%');
+                      });
+            });
+        }
+
+        // Date range filter
+        if ($dateFrom) {
+            $transactionsQuery->whereDate('created_at', '>=', $dateFrom);
+        }
+        if ($dateTo) {
+            $transactionsQuery->whereDate('created_at', '<=', $dateTo);
         }
 
         // Filter by payment status
@@ -536,6 +678,9 @@ class DashboardController extends Controller
             $eventId = $request->input('event_id');
             $eventCategoryId = $request->input('event_category_id');
             $paymentStatus = $request->input('payment_status');
+            $search = $request->input('search');
+            $dateFrom = $request->input('date_from');
+            $dateTo = $request->input('date_to');
 
             if ($sendToAll) {
                 // Build query with same filters as the participants list
@@ -551,6 +696,24 @@ class DashboardController extends Controller
 
                 if ($eventCategoryId) {
                     $participantsQuery->where('category', $eventCategoryId);
+                }
+
+                // Search filter
+                if ($search) {
+                    $participantsQuery->where(function($query) use ($search) {
+                        $query->where('name', 'like', '%' . $search . '%')
+                              ->orWhere('email', 'like', '%' . $search . '%')
+                              ->orWhere('phone', 'like', '%' . $search . '%')
+                              ->orWhere('participant_id', 'like', '%' . $search . '%');
+                    });
+                }
+
+                // Date range filter
+                if ($dateFrom) {
+                    $participantsQuery->whereDate('created_at', '>=', $dateFrom);
+                }
+                if ($dateTo) {
+                    $participantsQuery->whereDate('created_at', '<=', $dateTo);
                 }
 
                 if ($paymentStatus) {

@@ -28,6 +28,10 @@
             <div class="card">
                 <div class="card-body">
                     <form method="GET" action="{{ route('admin.reports.transactions') }}" class="row g-3">
+                        <div class="col-md-12 mb-2">
+                            <label for="search" class="form-label">Search</label>
+                            <input type="text" name="search" id="search" class="form-control" placeholder="Search by transaction ID, participant name, email, phone..." value="{{ request('search') }}">
+                        </div>
                         <div class="col-md-3">
                             <label for="event_id" class="form-label">Filter by Event</label>
                             <select name="event_id" id="event_id" class="form-select">
@@ -48,20 +52,28 @@
                                 <option value="failed" {{ request('payment_status') == 'failed' ? 'selected' : '' }}>Failed</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
+                            <label for="date_from" class="form-label">Date From</label>
+                            <input type="date" name="date_from" id="date_from" class="form-control" value="{{ request('date_from') }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="date_to" class="form-label">Date To</label>
+                            <input type="date" name="date_to" id="date_to" class="form-control" value="{{ request('date_to') }}">
+                        </div>
+                        <div class="col-md-3">
                             <label class="form-label">&nbsp;</label>
                             <div>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-filter me-1"></i>Apply Filter
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-filter me-1"></i>Apply Filters
                                 </button>
                             </div>
                         </div>
-                        @if(request('event_id') || request('payment_status'))
-                        <div class="col-md-2">
+                        @if(request('event_id') || request('payment_status') || request('search') || request('date_from') || request('date_to'))
+                        <div class="col-md-3">
                             <label class="form-label">&nbsp;</label>
                             <div>
-                                <a href="{{ route('admin.reports.transactions') }}" class="btn btn-outline-secondary">
-                                    <i class="fas fa-times me-1"></i>Clear Filters
+                                <a href="{{ route('admin.reports.transactions') }}" class="btn btn-outline-secondary w-100">
+                                    <i class="fas fa-times me-1"></i>Clear All Filters
                                 </a>
                             </div>
                         </div>
