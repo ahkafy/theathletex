@@ -193,6 +193,7 @@ class DashboardController extends Controller
         if ($search) {
             $transactionsQuery->where(function($query) use ($search) {
                 $query->where('transaction_id', 'like', '%' . $search . '%')
+                        ->orWhere('id', 'like', '%' . $search . '%')
                       ->orWhereHas('participant', function($q) use ($search) {
                           $q->where('name', 'like', '%' . $search . '%')
                             ->orWhere('email', 'like', '%' . $search . '%')
