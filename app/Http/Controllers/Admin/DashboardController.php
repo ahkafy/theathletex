@@ -241,7 +241,6 @@ class DashboardController extends Controller
         if ($search) {
             $searchFilter = function($query) use ($search) {
                 $query->where('transaction_id', 'like', '%' . $search . '%')
-                      ->orWhere('gateway_transaction_id', 'like', '%' . $search . '%')
                       ->orWhereHas('participant', function($q) use ($search) {
                           $q->where('name', 'like', '%' . $search . '%')
                             ->orWhere('email', 'like', '%' . $search . '%')
@@ -583,7 +582,6 @@ class DashboardController extends Controller
         if ($search) {
             $transactionsQuery->where(function($query) use ($search) {
                 $query->where('transaction_id', 'like', '%' . $search . '%')
-                      ->orWhere('gateway_transaction_id', 'like', '%' . $search . '%')
                       ->orWhereHas('participant', function($q) use ($search) {
                           $q->where('name', 'like', '%' . $search . '%')
                             ->orWhere('email', 'like', '%' . $search . '%')
