@@ -66,6 +66,11 @@ class RegistrationController extends Controller
             return redirect('/')->with('error', 'Event not found');
         }
 
+        // Check event status and show warning page if not open
+        if ($event->status !== 'open') {
+            return view('registration.closed', compact('event'));
+        }
+
         // Skip phone verification - allow direct registration
         $verifiedPhone = session('phone', ''); // Get phone from session if available, otherwise empty
 
@@ -81,6 +86,21 @@ class RegistrationController extends Controller
             return redirect()->back()
                 ->withInput()
                 ->withErrors(['event' => 'Event not found.']);
+        }
+
+        // Check event status before processing registration
+        if ($event->status !== 'open') {
+            $statusMessages = [
+                'scheduled' => 'Registration for this event has not started yet. The event is currently scheduled.',
+                'closed' => 'Registration for this event is now closed. No new registrations are being accepted.',
+                'complete' => 'This event has been completed. Registration is no longer available.',
+            ];
+
+            $message = $statusMessages[$event->status] ?? 'Registration is not available for this event at the moment.';
+
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['event' => $message]);
         }
 
         // Base validation rules

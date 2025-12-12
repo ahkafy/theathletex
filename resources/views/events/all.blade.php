@@ -54,9 +54,13 @@
                                     <p class="mb-1 px-3"><span class="fw-semibold">Venue:</span> {{ $event->venue }}</p>
                                 @endif
                                 <div class="mt-auto">
-                                    @if(\Carbon\Carbon::parse($event->start_time) > now())
+                                    @if($event->status === 'open' && \Carbon\Carbon::parse($event->start_time) > now())
                                         <a href="{{ route('register.create', $event->id) }}" class="btn global_button mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase">Register Now</a>
-                                    @elseif(\Carbon\Carbon::parse($event->end_time) < now())
+                                    @elseif($event->status === 'scheduled')
+                                        <div class="btn btn-info mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase" disabled>Registration Not Started</div>
+                                    @elseif($event->status === 'closed')
+                                        <div class="btn btn-secondary mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase" disabled>Registration Closed</div>
+                                    @elseif($event->status === 'complete' || \Carbon\Carbon::parse($event->end_time) < now())
                                         <a href="{{ url('#') }}" class="btn btn-secondary mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase">View Results</a>
                                     @else
                                         <div class="btn btn-warning mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase">Event in Progress</div>

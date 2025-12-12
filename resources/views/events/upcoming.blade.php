@@ -69,7 +69,17 @@
                                     <p class="mb-1 px-3"><span class="fw-semibold">Capacity:</span> {{ $event->capacity }} participants</p>
                                 @endif
                                 <div class="mt-auto">
-                                    <a href="{{ route('register.create', $event->id) }}" class="btn global_button mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase">Register Now</a>
+                                    @if($event->status === 'open')
+                                        <a href="{{ route('register.create', $event->id) }}" class="btn global_button mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase">Register Now</a>
+                                    @elseif($event->status === 'scheduled')
+                                        <div class="btn btn-info mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase" disabled>Registration Not Started</div>
+                                    @elseif($event->status === 'closed')
+                                        <div class="btn btn-secondary mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase" disabled>Registration Closed</div>
+                                    @elseif($event->status === 'complete')
+                                        <a href="{{ url('#') }}" class="btn btn-secondary mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase">View Results</a>
+                                    @else
+                                        <div class="btn btn-info mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase" disabled>{{ ucfirst($event->status) }}</div>
+                                    @endif
                                 </div>
                             </div>
                         </div>

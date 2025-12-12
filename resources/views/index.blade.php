@@ -132,9 +132,17 @@
                         <img src="{{ url($event->cover_photo) }}" class="card-img-top rounded-0 object-fit-cover" alt="Event 1 Image">
                     </a>
                     <div class="card-body p-0">
-                        <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Status:</span> {{ $event->status }}</p>
-                        <p class="mb-1 px-3 pb-3"><span class="fw-semibold">Date:</span> {{ $event->start_time }}</p>
-                        <a href="{{ route('register.create', $event->id) }}" class="btn global_button mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase">Register Now</a>
+                        <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Status:</span> {{ ucfirst($event->status) }}</p>
+                        <p class="mb-1 px-3 pb-3"><span class="fw-semibold">Date:</span> {{ \Carbon\Carbon::parse($event->start_time)->format('M d, Y') }}</p>
+                        @if($event->status === 'open')
+                            <a href="{{ route('register.create', $event->id) }}" class="btn global_button mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase">Register Now</a>
+                        @elseif($event->status === 'scheduled')
+                            <div class="btn btn-info mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase" disabled>Registration Not Started</div>
+                        @elseif($event->status === 'closed')
+                            <div class="btn btn-secondary mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase" disabled>Registration Closed</div>
+                        @elseif($event->status === 'complete')
+                            <div class="btn btn-secondary mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase" disabled>Event Completed</div>
+                        @endif
                     </div>
                 </div>
             @endforeach
