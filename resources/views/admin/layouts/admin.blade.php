@@ -140,6 +140,11 @@
                             <i class="fas fa-calendar-alt me-2"></i>Events
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('admin.forms.index') }}">
+                            <i class="fas fa-wpforms me-2"></i>Form Builder
+                        </a>
+                    </li>
 
                     <!-- Reports Section -->
                     <li class="nav-item mt-3">

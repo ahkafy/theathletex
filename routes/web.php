@@ -10,6 +10,8 @@ use App\Http\Controllers\EventResultController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SslCommerzPaymentController;
+use App\Http\Controllers\FormSubmissionController;
+use App\Http\Controllers\FormPaymentController;
 
 
 
@@ -73,3 +75,16 @@ Route::get('/return', [HomeController::class, 'return'])->name('return');
 
 Route::get('/testmail', [TestMailController::class, 'showForm']);
 Route::post('/testmail', [TestMailController::class, 'send']);
+
+// -------------------------------------------------------
+// Public Form Builder Routes
+// -------------------------------------------------------
+Route::get('/forms/{slug}', [FormSubmissionController::class, 'show'])->name('form.show');
+Route::post('/forms/{slug}', [FormSubmissionController::class, 'submit'])->name('form.submit');
+Route::get('/forms/{slug}/thanks', [FormSubmissionController::class, 'thankYou'])->name('form.thankyou');
+Route::get('/forms/{slug}/pay/{responseId}', [FormPaymentController::class, 'pay'])->name('form.payment.pay');
+Route::post('/form-payment/initiate', [FormPaymentController::class, 'initiate'])->name('form.payment.initiate');
+Route::post('/form-payment/success', [FormPaymentController::class, 'success'])->name('form.payment.success');
+Route::post('/form-payment/fail', [FormPaymentController::class, 'fail'])->name('form.payment.fail');
+Route::post('/form-payment/cancel', [FormPaymentController::class, 'cancel'])->name('form.payment.cancel');
+Route::post('/form-payment/ipn', [FormPaymentController::class, 'ipn'])->name('form.payment.ipn');

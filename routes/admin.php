@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\TransactionController;
+use App\Http\Controllers\Admin\FormBuilderController;
 use App\Http\Controllers\EventResultController;
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -63,5 +64,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
         Route::get('/transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
         Route::post('/transactions/store', [TransactionController::class, 'store'])->name('transactions.store');
+
+        // Form Builder Routes
+        Route::prefix('forms')->name('forms.')->group(function () {
+            Route::get('/', [FormBuilderController::class, 'index'])->name('index');
+            Route::get('/create', [FormBuilderController::class, 'create'])->name('create');
+            Route::post('/', [FormBuilderController::class, 'store'])->name('store');
+            Route::get('/{form}/edit', [FormBuilderController::class, 'edit'])->name('edit');
+            Route::put('/{form}', [FormBuilderController::class, 'update'])->name('update');
+            Route::delete('/{form}', [FormBuilderController::class, 'destroy'])->name('destroy');
+            Route::get('/{form}/responses', [FormBuilderController::class, 'responses'])->name('responses');
+            Route::get('/{form}/responses/export', [FormBuilderController::class, 'exportResponses'])->name('responses.export');
+        });
     });
 });

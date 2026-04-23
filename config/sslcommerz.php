@@ -16,9 +16,14 @@ return [
 		'refund_status' => "/validator/api/merchantTransIDvalidationAPI.php",
 	],
 	'apiDomain' => $apiDomain,
-	'connect_from_localhost' => env("IS_LOCALHOST", false), // For Sandbox, use "true", For Live, use "false"
+	'connect_from_localhost' => env("IS_LOCALHOST", false),
+
+	// Form payment callback URLs
+	// These are the URLs SSLCommerz actually uses — the library reads from here,
+	// not from the postData array passed to makePayment().
 	'success_url' => '/success',
 	'failed_url' => '/fail',
 	'cancel_url' => '/cancel',
 	'ipn_url' => '/ipn',
 ];
+
