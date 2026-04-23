@@ -42,7 +42,7 @@
     </div>
 </div>
 
-<form method="POST" action="{{ route('admin.forms.store') }}" id="formBuilderForm">
+<form method="POST" action="{{ route('admin.forms.store') }}" id="formBuilderForm" enctype="multipart/form-data">
     @csrf
     <div class="row g-4">
         {{-- LEFT: Form Settings --}}
@@ -61,8 +61,14 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Description</label>
-                        <textarea name="description" class="form-control" rows="3"
+                        <textarea name="description" class="form-control" rows="2"
                                   placeholder="Brief description shown to respondents">{{ old('description') }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Cover Photo</label>
+                        <input type="file" name="cover_photo" class="form-control @error('cover_photo') is-invalid @enderror" accept="image/*">
+                        <div class="form-text small text-muted">Recommended size: 1200x400px. Max 2MB.</div>
+                        @error('cover_photo')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" name="is_active" id="isActive" value="1"
@@ -126,6 +132,8 @@
                             ['select','Dropdown','fas fa-caret-square-down'],
                             ['radio','Radio','fas fa-dot-circle'],
                             ['checkbox','Checkbox','fas fa-check-square'],
+                            ['image','Image Upload','fas fa-image'],
+                            ['file','File Upload','fas fa-file-upload'],
                         ] as [$type, $label, $icon])
                         <div class="col-6">
                             <div class="field-type-btn" onclick="addField('{{ $type }}', '{{ $label }}')">
@@ -207,6 +215,11 @@ function addField(type, typeLabel) {
             <div class="flex-grow-1">
                 <input type="text" name="fields[${idx}][options]" class="form-control form-control-sm"
                        placeholder="Options: comma separated (e.g. Yes, No, Maybe)">
+            </div>` : ''}
+            ${type === 'file' || type === 'image' ? `
+            <div class="flex-grow-1">
+                <input type="text" name="fields[${idx}][validation_rules]" class="form-control form-control-sm"
+                       placeholder="Validation: e.g. mimes:pdf,docx or mimes:jpg,png|max:5120">
             </div>` : ''}
         </div>
     </div>`;

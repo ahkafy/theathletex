@@ -13,12 +13,15 @@ class FormField extends Model
         'placeholder',
         'options',
         'is_required',
+        'validation_rules',
         'sort_order',
     ];
 
     protected $casts = [
         'options' => 'array',
         'is_required' => 'boolean',
+        'validation_rules' => 'array',
+        'sort_order' => 'integer',
     ];
 
     public function form()

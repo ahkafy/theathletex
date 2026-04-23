@@ -16,6 +16,17 @@
         color: white;
         padding: 2.5rem 2rem 2rem;
     }
+    .cover-container {
+        width: 100%;
+        max-height: 250px;
+        overflow: hidden;
+        border-bottom: 5px solid #ffc107;
+    }
+    .cover-container img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+    }
     .form-body { padding: 2rem; }
     .form-field-group { margin-bottom: 1.5rem; }
     .form-field-group label { font-weight: 600; margin-bottom: 0.4rem; color: #222; }
@@ -54,6 +65,13 @@
 @section('content')
 <div class="form-wrapper">
     <div class="form-card">
+        {{-- Cover Photo --}}
+        @if($form->cover_photo)
+            <div class="cover-container">
+                <img src="{{ asset('storage/' . $form->cover_photo) }}" alt="{{ $form->title }}">
+            </div>
+        @endif
+
         {{-- Header --}}
         <div class="form-header">
             <h1 class="h3 fw-bold mb-2">{{ $form->title }}</h1>
@@ -97,7 +115,7 @@
             </div>
             @endif
 
-            <form method="POST" action="{{ route('form.submit', $form->slug) }}" id="publicForm">
+            <form method="POST" action="{{ route('form.submit', $form->slug) }}" id="publicForm" enctype="multipart/form-data">
                 @csrf
 
                 {{-- Always-collected respondent info --}}
@@ -122,7 +140,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-field-group mb-0">
-                                <label>Phone Number {{ $form->payment_required ? '<span class="required-star">*</span>' : '' }}</label>
+                                <label>Phone Number {!! $form->payment_required ? '<span class="required-star">*</span>' : '' !!}</label>
                                 <input type="tel" name="respondent_phone" class="form-control @error('respondent_phone') is-invalid @enderror"
                                        value="{{ old('respondent_phone') }}" placeholder="+880…"
                                        {{ $form->payment_required ? 'required' : '' }}>
@@ -194,6 +212,15 @@
                             </div>
                             @endforeach
                         </div>
+
+                    @elseif($field->field_type === 'file' || $field->field_type === 'image')
+                        <input type="file" name="field_{{ $field->id }}" id="field_{{ $field->id }}"
+                               class="form-control @error('field_'.$field->id) is-invalid @enderror"
+                               {{ $field->field_type === 'image' ? 'accept=image/*' : '' }}
+                               {{ $field->is_required ? 'required' : '' }}>
+                        @if($field->placeholder)
+                            <div class="form-text small opacity-75">{{ $field->placeholder }}</div>
+                        @endif
 
                     @else
                         <input type="{{ $field->field_type }}" name="field_{{ $field->id }}" id="field_{{ $field->id }}"

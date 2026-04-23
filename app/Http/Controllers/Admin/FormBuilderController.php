@@ -8,6 +8,8 @@ use App\Models\FormField;
 use App\Models\FormResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FormBuilderController extends Controller
 {
@@ -42,6 +44,8 @@ class FormBuilderController extends Controller
             'fields.*.placeholder' => 'nullable|string|max:255',
             'fields.*.options'     => 'nullable|string',
             'fields.*.is_required' => 'nullable|boolean',
+            'fields.*.validation_rules' => 'nullable|string',
+            'cover_photo'      => 'nullable|image|max:2048',
         ]);
 
         // Generate unique slug
@@ -58,6 +62,7 @@ class FormBuilderController extends Controller
             'title'            => $request->title,
             'slug'             => $slug,
             'description'      => $request->description,
+            'cover_photo'      => $request->hasFile('cover_photo') ? $request->file('cover_photo')->store('forms', 'public') : null,
             'is_active'        => $request->boolean('is_active', true),
             'payment_required' => $paymentRequired,
             'payment_amount'   => $paymentRequired ? $request->payment_amount : null,
@@ -90,18 +95,29 @@ class FormBuilderController extends Controller
             'fields.*.placeholder' => 'nullable|string|max:255',
             'fields.*.options'     => 'nullable|string',
             'fields.*.is_required' => 'nullable|boolean',
+            'fields.*.validation_rules' => 'nullable|string',
+            'cover_photo'      => 'nullable|image|max:2048',
         ]);
 
         $paymentRequired = $request->boolean('payment_required');
 
-        $form->update([
+        $updateData = [
             'title'            => $request->title,
             'description'      => $request->description,
             'is_active'        => $request->boolean('is_active', true),
             'payment_required' => $paymentRequired,
             'payment_amount'   => $paymentRequired ? $request->payment_amount : null,
             'payment_currency' => $request->payment_currency ?: 'BDT',
-        ]);
+        ];
+
+        if ($request->hasFile('cover_photo')) {
+            if ($form->cover_photo) {
+                Storage::disk('public')->delete($form->cover_photo);
+            }
+            $updateData['cover_photo'] = $request->file('cover_photo')->store('forms', 'public');
+        }
+
+        $form->update($updateData);
 
         // Delete old fields and recreate
         $form->fields()->delete();
@@ -212,22 +228,17 @@ class FormBuilderController extends Controller
     // -------------------------------------------------------
     private function syncFields(Form $form, array $fields): void
     {
-        foreach ($fields as $order => $field) {
-            if (empty($field['label'])) continue;
+        foreach ($fields as $i => $f) {
+            if (empty($f['label'])) continue;
 
-            $options = null;
-            if (!empty($field['options']) && in_array($field['field_type'], ['select', 'radio', 'checkbox'])) {
-                $options = array_values(array_filter(array_map('trim', explode(',', $field['options']))));
-            }
-
-            FormField::create([
-                'form_id'    => $form->id,
-                'label'      => $field['label'],
-                'field_type' => $field['field_type'],
-                'placeholder' => $field['placeholder'] ?? null,
-                'options'    => $options,
-                'is_required' => isset($field['is_required']) && $field['is_required'] ? true : false,
-                'sort_order' => $order,
+            $form->fields()->create([
+                'label'            => $f['label'],
+                'field_type'       => $f['field_type'],
+                'placeholder'      => $f['placeholder'] ?? null,
+                'options'          => isset($f['options']) ? array_map('trim', explode(',', $f['options'])) : null,
+                'is_required'      => isset($f['is_required']),
+                'validation_rules' => $f['validation_rules'] ?? null,
+                'sort_order'       => $i,
             ]);
         }
     }

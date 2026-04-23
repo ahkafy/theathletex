@@ -11,10 +11,11 @@ class Form extends Model
         'title',
         'slug',
         'description',
-        'is_active',
+        'cover_photo',
         'payment_required',
         'payment_amount',
         'payment_currency',
+        'is_active'
     ];
 
     protected $casts = [

@@ -44,7 +44,7 @@
     </div>
 </div>
 
-<form method="POST" action="{{ route('admin.forms.update', $form) }}" id="formBuilderForm">
+<form method="POST" action="{{ route('admin.forms.update', $form) }}" id="formBuilderForm" enctype="multipart/form-data">
     @csrf @method('PUT')
     <div class="row g-4">
         {{-- LEFT --}}
@@ -62,7 +62,18 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Description</label>
-                        <textarea name="description" class="form-control" rows="3">{{ old('description', $form->description) }}</textarea>
+                        <textarea name="description" class="form-control" rows="2">{{ old('description', $form->description) }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Cover Photo</label>
+                        @if($form->cover_photo)
+                            <div class="mb-2 position-relative">
+                                <img src="{{ asset('storage/' . $form->cover_photo) }}" class="img-fluid rounded border" style="max-height: 100px">
+                            </div>
+                        @endif
+                        <input type="file" name="cover_photo" class="form-control @error('cover_photo') is-invalid @enderror" accept="image/*">
+                        <div class="form-text small text-muted">Leave empty to keep current. Max 2MB.</div>
+                        @error('cover_photo')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <div class="mb-2">
                         <label class="form-label fw-semibold small text-muted">Public URL</label>
@@ -130,6 +141,8 @@
                             ['select','Dropdown','fas fa-caret-square-down'],
                             ['radio','Radio','fas fa-dot-circle'],
                             ['checkbox','Checkbox','fas fa-check-square'],
+                            ['image','Image Upload','fas fa-image'],
+                            ['file','File Upload','fas fa-file-upload'],
                         ] as [$type, $label, $icon])
                         <div class="col-6">
                             <div class="field-type-btn" onclick="addField('{{ $type }}', '{{ $label }}')">
@@ -177,7 +190,7 @@ const existingFields = @json($form->fields);
 
 window.addEventListener('DOMContentLoaded', () => {
     existingFields.forEach(f => {
-        addFieldFromData(f.field_type, f.label, f.placeholder, f.options, f.is_required);
+        addFieldFromData(f.field_type, f.label, f.placeholder, f.options, f.is_required, f.validation_rules);
     });
     if (existingFields.length === 0) {
         document.getElementById('emptyMsg').style.display = '';
@@ -189,26 +202,29 @@ function togglePayment(checked) {
     if (!checked) document.getElementById('paymentAmount').value = '';
 }
 
-function addFieldFromData(type, label, placeholder, options, required) {
+function addFieldFromData(type, label, placeholder, options, required, validationRules) {
     const idx = fieldIndex++;
     const typeLabel = { text:'Text', email:'Email', number:'Number', tel:'Phone',
-        date:'Date', textarea:'Textarea', select:'Dropdown', radio:'Radio', checkbox:'Checkbox' }[type] || type;
-
+        date:'Date', textarea:'Textarea', select:'Dropdown', radio:'Radio', checkbox:'Checkbox',
+        image: 'Image Upload', file: 'File Upload' }[type] || type;
+    
     const needsOptions = ['select', 'radio', 'checkbox'].includes(type);
+    const isFile = ['file', 'image'].includes(type);
     const optionsValue = options ? (Array.isArray(options) ? options.join(', ') : options) : '';
 
-    const html = buildFieldHtml(idx, type, typeLabel, label, placeholder, optionsValue, required);
+    const html = buildFieldHtml(idx, type, typeLabel, label, placeholder, optionsValue, required, validationRules);
     document.getElementById('fields-container').insertAdjacentHTML('beforeend', html);
     updateFieldCount();
 }
 
 function addField(type, typeLabel) {
     document.getElementById('emptyMsg').style.display = 'none';
-    addFieldFromData(type, '', '', null, false);
+    addFieldFromData(type, '', '', null, false, '');
 }
 
-function buildFieldHtml(idx, type, typeLabel, label, placeholder, optionsValue, isRequired) {
+function buildFieldHtml(idx, type, typeLabel, label, placeholder, optionsValue, isRequired, validationRules) {
     const needsOptions = ['select', 'radio', 'checkbox'].includes(type);
+    const isFile = ['file', 'image'].includes(type);
     return `
     <div class="field-card" id="field-${idx}" draggable="true"
          ondragstart="dragStart(event)" ondragend="dragEnd(event)"
@@ -238,6 +254,11 @@ function buildFieldHtml(idx, type, typeLabel, label, placeholder, optionsValue, 
             <div class="flex-grow-1">
                 <input type="text" name="fields[${idx}][options]" class="form-control form-control-sm"
                        placeholder="Options: comma separated" value="${optionsValue}">
+            </div>` : ''}
+            ${isFile ? `
+            <div class="flex-grow-1">
+                <input type="text" name="fields[${idx}][validation_rules]" class="form-control form-control-sm"
+                       placeholder="Validation: e.g. mimes:pdf|max:5120" value="${validationRules || ''}">
             </div>` : ''}
         </div>
     </div>`;

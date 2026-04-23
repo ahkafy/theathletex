@@ -207,6 +207,10 @@
                         @php $val = $response->response_data[$field->id] ?? null; @endphp
                         @if(is_array($val))
                             {{ implode(', ', $val) }}
+                        @elseif($val && str_starts_with($val, 'responses/'))
+                            <a href="{{ asset('storage/' . $val) }}" target="_blank" class="text-primary">
+                                <i class="fas fa-file-download me-1"></i>View File
+                            </a>
                         @elseif($val)
                             {{ Str::limit($val, 40) }}
                         @else
@@ -292,6 +296,15 @@
                                 <td>
                                     @if(is_array($val))
                                         {{ implode(', ', $val) }}
+                                    @elseif($val && str_starts_with($val, 'responses/'))
+                                        <div class="mb-2">
+                                            <a href="{{ asset('storage/' . $val) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-external-link-alt me-1"></i>View / Download File
+                                            </a>
+                                        </div>
+                                        @if(in_array(strtolower(pathinfo($val, PATHINFO_EXTENSION)), ['jpg','jpeg','png','gif','webp']))
+                                            <img src="{{ asset('storage/' . $val) }}" class="img-fluid rounded border mt-2" style="max-height: 200px">
+                                        @endif
                                     @elseif($val)
                                         {{ $val }}
                                     @else

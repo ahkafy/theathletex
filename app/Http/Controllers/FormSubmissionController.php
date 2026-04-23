@@ -51,6 +51,11 @@ class FormSubmissionController extends Controller
                 $rule[] = 'date';
             } elseif ($field->field_type === 'checkbox') {
                 $rule[] = 'array';
+            } elseif ($field->field_type === 'file' || $field->field_type === 'image') {
+                $rule[] = $field->field_type === 'image' ? 'image' : 'file';
+                if ($field->validation_rules) {
+                    $rule[] = $field->validation_rules;
+                }
             }
 
             $rules[$fieldKey] = implode('|', $rule);
@@ -61,7 +66,13 @@ class FormSubmissionController extends Controller
         // Collect field responses
         $responseData = [];
         foreach ($form->fields as $field) {
-            $responseData[$field->id] = $request->input('field_' . $field->id);
+            $fieldKey = 'field_' . $field->id;
+            if ($request->hasFile($fieldKey)) {
+                $path = $request->file($fieldKey)->store('responses/' . $form->slug, 'public');
+                $responseData[$field->id] = $path;
+            } else {
+                $responseData[$field->id] = $request->input($fieldKey);
+            }
         }
 
         // Determine payment status
