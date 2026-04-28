@@ -4,30 +4,41 @@
 
 <div class="container mt-4">
     <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Trx ID</th>
-                <th>User Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Event Name</th>
-                <th>Event Date</th>
-                <th>Pending Amount</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
         <tbody>
             <tr>
+                <th>Trx ID</th>
                 <td><b>{{ $transaction->id }}</b></td>
+            </tr>
+            <tr>
+                <th>User Name</th>
                 <td>{{ $transaction->participant->name }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
                 <td>{{ $transaction->participant->email }}</td>
+            </tr>
+            <tr>
+                <th>Phone</th>
                 <td>{{ $transaction->participant->phone }}</td>
+            </tr>
+            <tr>
+                <th>Event Name</th>
                 <td>{{ $transaction->event->name }}</td>
+            </tr>
+            <tr>
+                <th>Event Date</th>
                 <td>{{ $transaction->event->start_time }}</td>
+            </tr>
+            <tr>
+                <th>Pending Amount</th>
                 <td>{{ number_format($transaction->amount) }} BDT</td>
-                <td>{{ $transaction->status }} </td>
-
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>{{ $transaction->status }}</td>
+            </tr>
+            <tr>
+                <th>Action</th>
                 <td>
                     @if($transaction->status !== 'Complete')
                         <form action="{{ url('pay') }}" method="POST">
