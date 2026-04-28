@@ -13,7 +13,15 @@ class HomeController extends Controller
     {
         // Get open events for homepage
         $events = Event::with('fees')->where('status', 'open')->orderBy('start_time', 'desc')->get();
-        return view('index', compact('events'));
+        
+        $pastEvents = Event::with('fees')
+            ->where('status', 'complete')
+            ->orWhere('end_time', '<', now())
+            ->orderBy('end_time', 'desc')
+            ->take(8)
+            ->get();
+
+        return view('index', compact('events', 'pastEvents'));
     }
 
     public function allEvents()

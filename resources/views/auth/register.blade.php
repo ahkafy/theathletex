@@ -214,7 +214,7 @@
 
         <hr class="border-light">
         <div class="text-center small">
-            © 2025 The Athlete X Limited. All rights reserved. | Built in Bangladesh
+            © {{ date('Y') }} The Athlete X Limited. All rights reserved. | Developed by <a href="https://cloudhousebd.com" target="_blank" class="text-white text-decoration-none">Cloud House Technologies</a>
         </div>
     </div>
 </footer>

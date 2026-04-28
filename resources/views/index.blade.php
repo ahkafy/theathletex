@@ -186,20 +186,26 @@
         </div>
     </div>
     <div class="row">
-        @if (!false)
+        @if ($pastEvents->isEmpty())
             <h1 class="text-center my-5">No past events now!</h1>
         @else
-        <div class="card rounded-1 col-12 col-md-4 col-lg-3 mb-4 mx-2">
-            <a href="{{ url('details.html') }}" class="card-title d-block nav-link p-3 fw-bold">Berabo Tennis</a>
-            <a class="d-block px-3" href="{{ url('details.html') }}">
-                    <img src="{{ url('images/card1.jpg') }}" class="card-img-top rounded-0 object-fit-cover" alt="Event 1 Image" style="height: 180px;">
-            </a>
-            <div class="card-body p-0">
-                    <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Type:</span> Tennis</p>
-                    <p class="mb-1 px-3 pb-3"><span class="fw-semibold">Date:</span> July 15, 2025</p>
-                    <a href="{{ url('RegistrationNumber.html') }}" class="btn btn- global_button  mt-2 d-block rounded-0  rounded-bottom-1 text-uppercase">see result</a>
-            </div>
-        </div>
+            @foreach ($pastEvents as $event)
+                <div class="card rounded-1 col-12 col-md-4 col-lg-3 mb-4 mx-2">
+                    <a href="{{ url('#') }}" class="card-title d-block nav-link p-3 fw-bold">{{ $event->name }}</a>
+                    <a class="d-block px-3" href="{{ url('#') }}">
+                            <img src="{{ url($event->cover_photo) }}" class="card-img-top rounded-0 object-fit-cover" alt="{{ $event->name }} Image" style="height: 180px;">
+                    </a>
+                    <div class="card-body p-0">
+                            <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Status:</span> {{ ucfirst($event->status) }}</p>
+                            <p class="mb-1 px-3 pb-3"><span class="fw-semibold">Date:</span> {{ \Carbon\Carbon::parse($event->start_time)->format('M d, Y') }}</p>
+                            @if($event->results()->count() > 0)
+                                <a href="{{ route('events.results', $event->slug) }}" class="btn global_button mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase">See Results</a>
+                            @else
+                                <div class="btn btn-secondary mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase" disabled>Results Pending</div>
+                            @endif
+                    </div>
+                </div>
+            @endforeach
         @endif
     </div>
 </section>
@@ -257,7 +263,7 @@
 
         <hr class="border-light">
         <div class="text-center small">
-            © 2025 The Athlete X Limited. All rights reserved. | Built in Bangladesh
+            © {{ date('Y') }} The Athlete X Limited. All rights reserved. | Developed by <a href="https://cloudhousebd.com" target="_blank" class="text-white text-decoration-none">Cloud House Technologies</a>
         </div>
     </div>
 </footer>
