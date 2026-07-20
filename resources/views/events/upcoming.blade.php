@@ -47,7 +47,7 @@
                             <div class="badge bg-success position-absolute top-0 end-0 m-2 z-index-1">Upcoming</div>
                             <a href="{{ url('#') }}" class="card-title d-block nav-link p-3 fw-bold">{{ $event->name }}</a>
                             <a class="d-block px-3" href="{{ url('#') }}">
-                                <img src="{{ url($event->cover_photo) }}" class="card-img-top rounded-0 object-fit-cover" alt="{{ $event->name }}" style="height: 200px;">
+                                <img src="{{ url($event->cover_photo ?: 'images/card' . (($event->id % 5) + 1) . '.jpg') }}" class="card-img-top rounded-0 object-fit-cover" alt="{{ $event->name }}" style="height: 200px;">
                             </a>
                             <div class="card-body p-0 d-flex flex-column">
                                 @php

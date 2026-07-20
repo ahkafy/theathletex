@@ -11,67 +11,7 @@
 </head>
 <body>
 
-<!-- Header with Navbar and Offcanvas -->
-<header class="bg-dark text-white">
-    <nav class="navbar navbar-dark navbar-expand-lg container">
-    <a class="navbar-brand" href="{{ url('/') }}"><img class="logo" src="{{ url('images/logo-removebg-preview.png') }}" alt=""></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasMenu">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title">Menu</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-        </div>
-        <div class="offcanvas-body d-flex flex-column flex-lg-row justify-content-between align-items-center w-100">
-
-            <!-- Centered menu items -->
-            <ul class="navbar-nav mx-auto text-center">
-                <li class="nav-item"><a class="nav-link text-white" href="{{ url('/') }}">Home</a></li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-white" href="#" id="eventsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Events
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="eventsDropdown">
-                        <li><a class="dropdown-item" href="{{ route('events.upcoming') }}">Upcoming Events</a></li>
-                        <li><a class="dropdown-item" href="{{ route('events.past') }}">Past Events</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="{{ route('events.all') }}">All Events</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item"><a class="nav-link text-white" href="#">Contact</a></li>
-            </ul>
-
-            <!-- Right-aligned auth menu -->
-            <div class="text-center mt-3 mt-lg-0">
-                @auth
-                    <div class="d-flex gap-2 align-items-center">
-                        <a href="{{ route('profile.index') }}" class="btn btn-outline-light px-3">
-                            <i class="bi bi-person"></i> Profile
-                        </a>
-                        <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn btn-outline-danger px-3">
-                                <i class="bi bi-box-arrow-right"></i> Logout
-                            </button>
-                        </form>
-                    </div>
-                @else
-                    <div class="d-flex gap-2">
-                        <a href="{{ route('login') }}" class="btn btn-outline-light px-3">
-                            <i class="bi bi-box-arrow-in-right"></i> Login
-                        </a>
-                        <a href="{{ route('register') }}" class="btn global_button px-3">
-                            <i class="bi bi-person-plus"></i> Register
-                        </a>
-                    </div>
-                @endauth
-            </div>
-        </div>
-    </div>
-</nav>
-</header>
+@include('partials.navbar')
 
 <!-- Owl Carousel Banner -->
 <div class="owl-carousel owl-theme banner-carousel">
@@ -129,7 +69,7 @@
                 <div class="card rounded-1 col-12 col-md-4 col-lg-3 mb-4 mx-2">
                     <a href="{{ url('#') }}" class="card-title d-block nav-link p-3 fw-bold">{{ $event->name }}</a>
                     <a class="d-block px-3" href="{{ url('#') }}">
-                        <img src="{{ url($event->cover_photo) }}" class="card-img-top rounded-0 object-fit-cover" alt="Event 1 Image">
+                        <img src="{{ url($event->cover_photo ?: 'images/card' . (($event->id % 5) + 1) . '.jpg') }}" class="card-img-top rounded-0 object-fit-cover" alt="Event 1 Image">
                     </a>
                     <div class="card-body p-0">
                         <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Status:</span> {{ ucfirst($event->status) }}</p>
@@ -193,7 +133,7 @@
                 <div class="card rounded-1 col-12 col-md-4 col-lg-3 mb-4 mx-2">
                     <a href="{{ url('#') }}" class="card-title d-block nav-link p-3 fw-bold">{{ $event->name }}</a>
                     <a class="d-block px-3" href="{{ url('#') }}">
-                            <img src="{{ url($event->cover_photo) }}" class="card-img-top rounded-0 object-fit-cover" alt="{{ $event->name }} Image" style="height: 180px;">
+                            <img src="{{ url($event->cover_photo ?: 'images/card' . (($event->id % 5) + 1) . '.jpg') }}" class="card-img-top rounded-0 object-fit-cover" alt="{{ $event->name }} Image" style="height: 180px;">
                     </a>
                     <div class="card-body p-0">
                             <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Status:</span> {{ ucfirst($event->status) }}</p>

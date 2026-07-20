@@ -19,37 +19,7 @@
 </head>
 <body>
 
-<!-- Header with Navbar and Offcanvas -->
-<header class="bg-dark text-white">
-    <nav class="navbar navbar-dark navbar-expand-lg container">
-    <a class="navbar-brand" href="{{ url('/') }}"><img class="logo" src="{{ url('images/logo-removebg-preview.png') }}" alt=""></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasMenu">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title">Menu</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-        </div>
-        <div class="offcanvas-body d-flex flex-column flex-lg-row justify-content-between align-items-center w-100">
-
-            <!-- Centered menu items -->
-            <ul class="navbar-nav mx-auto text-center">
-                <li class="nav-item"><a class="nav-link text-white" href="#">Home</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="#">Events</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="#">Register</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="#">Contact</a></li>
-            </ul>
-
-            <!-- "For Organizer" button -->
-            <div class="text-center mt-3 mt-lg-0">
-                <a href="{{ url('organizer.html') }}" class="btn global_button px-4">For Organizer</a>
-            </div>
-        </div>
-    </div>
-</nav>
-</header>
+@include('partials.navbar')
 
 
 @yield('content')
