@@ -28,6 +28,18 @@ class Event extends Model
         return 'slug';
     }
 
+    public function getRouteKey()
+    {
+        return $this->slug ?: (string) $this->id;
+    }
+
+    public function resolveRouteBinding($value, $field = null)
+    {
+        return $this->where($field ?? $this->getRouteKeyName(), $value)
+            ->orWhere('id', $value)
+            ->first();
+    }
+
     public function fees()
     {
         // Define the relationship with EventFee model for each event

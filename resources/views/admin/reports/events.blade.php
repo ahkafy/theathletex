@@ -109,10 +109,10 @@
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
-                                    <a href="{{ route('admin.events.show', $event->slug) }}" class="btn btn-sm btn-outline-info">
+                                    <a href="{{ route('admin.events.show', $event->slug ?: $event->id) }}" class="btn btn-sm btn-outline-info">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="{{ route('admin.events.edit', $event->slug) }}" class="btn btn-sm btn-outline-warning">
+                                    <a href="{{ route('admin.events.edit', $event->slug ?: $event->id) }}" class="btn btn-sm btn-outline-warning">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                 </div>

@@ -73,7 +73,7 @@
                                 @endif
                                 <div class="mt-auto">
                                     @if($event->results()->count() > 0)
-                                        <a href="{{ route('events.results', $event->slug) }}" class="btn btn-outline-primary mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase">View Results</a>
+                                        <a href="{{ route('events.results', $event->slug ?: $event->id) }}" class="btn btn-outline-primary mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase">View Results</a>
                                     @else
                                         <div class="btn btn-light mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase text-muted">Results Pending</div>
                                     @endif

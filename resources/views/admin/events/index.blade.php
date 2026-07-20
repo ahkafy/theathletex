@@ -94,10 +94,10 @@
                         <div class="mt-auto">
                             <div class="d-grid gap-2">
                                 <div class="btn-group" role="group">
-                                    <a href="{{ route('admin.events.show', $event->slug) }}" class="btn btn-outline-info btn-sm">
+                                    <a href="{{ route('admin.events.show', $event->slug ?: $event->id) }}" class="btn btn-outline-info btn-sm">
                                         <i class="fas fa-eye"></i> View
                                     </a>
-                                    <a href="{{ route('admin.events.edit', $event->slug) }}" class="btn btn-outline-warning btn-sm">
+                                    <a href="{{ route('admin.events.edit', $event->slug ?: $event->id) }}" class="btn btn-outline-warning btn-sm">
                                         <i class="fas fa-edit"></i> Edit
                                     </a>
                                     <a href="{{ route('admin.events.results.index', $event->id) }}" class="btn btn-outline-primary btn-sm">
@@ -117,7 +117,7 @@
                                     </button>
                                 </div>
 
-                                <button class="btn btn-outline-danger btn-sm" onclick="confirmDelete('{{ $event->slug }}', '{{ $event->name }}')">
+                                <button class="btn btn-outline-danger btn-sm" onclick="confirmDelete('{{ $event->slug ?: $event->id }}', '{{ $event->name }}')">
                                     <i class="fas fa-trash"></i> Delete
                                 </button>
                             </div>

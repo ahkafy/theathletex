@@ -89,7 +89,7 @@
                 <button onclick="printCertificate()" class="btn btn-primary btn-lg me-3">
                     <i class="fas fa-print me-2"></i>Print Certificate
                 </button>
-                <a href="{{ route('events.results', $event->slug) }}" class="btn btn-outline-secondary btn-lg">
+                <a href="{{ route('events.results', $event->slug ?: $event->id) }}" class="btn btn-outline-secondary btn-lg">
                     <i class="fas fa-arrow-left me-2"></i>Back to Results
                 </a>
             </div>

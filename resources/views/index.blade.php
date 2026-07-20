@@ -139,7 +139,7 @@
                             <p class="mb-1 px-3 pt-3"><span class="fw-semibold">Status:</span> {{ ucfirst($event->status) }}</p>
                             <p class="mb-1 px-3 pb-3"><span class="fw-semibold">Date:</span> {{ \Carbon\Carbon::parse($event->start_time)->format('M d, Y') }}</p>
                             @if($event->results()->count() > 0)
-                                <a href="{{ route('events.results', $event->slug) }}" class="btn global_button mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase">See Results</a>
+                                <a href="{{ route('events.results', $event->slug ?: $event->id) }}" class="btn global_button mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase">See Results</a>
                             @else
                                 <div class="btn btn-secondary mt-2 d-block rounded-0 rounded-bottom-1 text-uppercase" disabled>Results Pending</div>
                             @endif

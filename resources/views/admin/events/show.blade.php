@@ -8,7 +8,7 @@
             <h1>Event Details</h1>
             <div>
                 <a href="{{ route('admin.events.results.index', $event->id) }}" class="btn btn-info">Manage Results</a>
-                <a href="{{ route('admin.events.edit', $event->slug) }}" class="btn btn-warning">Edit Event</a>
+                <a href="{{ route('admin.events.edit', $event->slug ?: $event->id) }}" class="btn btn-warning">Edit Event</a>
                 <a href="{{ route('admin.events.index') }}" class="btn btn-secondary">Back to Events</a>
             </div>
         </div>

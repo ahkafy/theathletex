@@ -28,12 +28,12 @@
                 <div class="card-body">
                     <h5 class="card-title">Filter by Category</h5>
                     <div class="btn-group flex-wrap" role="group">
-                        <a href="{{ route('events.results', $event->slug) }}"
+                        <a href="{{ route('events.results', $event->slug ?: $event->id) }}"
                            class="btn {{ !isset($category) ? 'btn-primary' : 'btn-outline-primary' }}">
                             All Categories
                         </a>
                         @foreach($categories as $cat)
-                        <a href="{{ route('events.results.category', [$event->slug, $cat]) }}"
+                        <a href="{{ route('events.results.category', [$event->slug ?: $event->id, $cat]) }}"
                            class="btn {{ isset($category) && $category == $cat ? 'btn-primary' : 'btn-outline-primary' }}">
                             {{ $cat }}
                         </a>
@@ -110,7 +110,7 @@
                                     <td>{{ $result->best_lap ?: '-' }}</td>
                                     <td>
                                         @if(!$result->dnf && !$result->dsq)
-                                        <a href="{{ route('events.certificate', [$event->slug, $result->participant_id]) }}"
+                                        <a href="{{ route('events.certificate', [$event->slug ?: $event->id, $result->participant_id]) }}"
                                            class="btn btn-sm btn-success" target="_blank">
                                             <i class="fas fa-certificate me-1"></i>Certificate
                                         </a>
