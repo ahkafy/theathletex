@@ -234,7 +234,8 @@ class RegistrationController extends Controller
         return view('registration.payment', compact('transaction'))->with('success', 'Payment initiated successfully. Please proceed with the payment.');
     }
 
-    function smsSend($phone, $msg) {
+    function smsSend($phone, $msg)
+    {
         $url = "http://bulksmsbd.net/api/smsapi";
         $api_key = "MRk54VtStyOPwoApfyuP";
         $senderid = env('BULKSMSBD_SENDER_ID', 'theatheletex');
@@ -245,7 +246,8 @@ class RegistrationController extends Controller
             "api_key" => $api_key,
             "senderid" => $senderid,
             "number" => $number,
-            "message" => $message
+            "message" => $message,
+            "is_masking" => 1,
         ];
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);

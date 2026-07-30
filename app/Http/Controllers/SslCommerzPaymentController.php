@@ -88,10 +88,10 @@ class SslCommerzPaymentController extends Controller
         if ($check) {
 
             // Send SMS to participant
-            $name      = $trxInfo->participant->name ?? '';
+            $name = $trxInfo->participant->name ?? '';
             $eventName = $trxInfo->event->name ?? '';
-            $orderId   = $tran_id;
-            $category  = $trxInfo->participant->category ?? '';
+            $orderId = $tran_id;
+            $category = $trxInfo->participant->category ?? '';
 
             $msg = "Dear {$name} your registration for {$eventName} is confirmed! Order # {$orderId} Category: {$category}. Best regards, The Athlete X";
             // Ensure message contains ASCII characters only
@@ -107,7 +107,7 @@ class SslCommerzPaymentController extends Controller
                 \Log::error('Failed to send payment confirmation email: ' . $e->getMessage());
             }
 
-           // echo "Transaction is successfully Completed";
+            // echo "Transaction is successfully Completed";
 
             return redirect()->route('payment.init', ['trxID' => $tran_id])
                 ->with('success', 'Transaction is successfully Completed');
@@ -181,7 +181,8 @@ class SslCommerzPaymentController extends Controller
 
 
 
-    function smsSend($phone, $msg) {
+    function smsSend($phone, $msg)
+    {
         $url = "http://bulksmsbd.net/api/smsapi";
         $api_key = "MRk54VtStyOPwoApfyuP";
         $senderid = env('BULKSMSBD_SENDER_ID', 'theatheletex');
@@ -192,7 +193,8 @@ class SslCommerzPaymentController extends Controller
             "api_key" => $api_key,
             "senderid" => $senderid,
             "number" => $number,
-            "message" => $message
+            "message" => $message,
+            "is_masking" => 1,
         ];
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);

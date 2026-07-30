@@ -32,35 +32,36 @@ class TestNotificationController extends Controller
     public function sendSms(Request $request)
     {
         $request->validate([
-            'phone'      => 'required|string',
-            'name'       => 'required|string',
+            'phone' => 'required|string',
+            'name' => 'required|string',
             'event_name' => 'required|string',
-            'order_id'   => 'required|string',
-            'category'   => 'required|string',
+            'order_id' => 'required|string',
+            'category' => 'required|string',
         ]);
 
-        $phone     = trim($request->input('phone'));
-        $name      = trim($request->input('name'));
+        $phone = trim($request->input('phone'));
+        $name = trim($request->input('name'));
         $eventName = trim($request->input('event_name'));
-        $orderId   = trim($request->input('order_id'));
-        $category  = trim($request->input('category'));
+        $orderId = trim($request->input('order_id'));
+        $category = trim($request->input('category'));
 
         // Build exact confirmation message
         $msg = "Dear {$name} your registration for {$eventName} is confirmed! Order # {$orderId} Category: {$category}. Best regards, The Athlete X";
-        
+
         // Transliterate to clean ASCII
         $asciiMsg = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $msg) ?: $msg;
 
         // Send via BulkSMSBD API
-        $apiUrl   = "http://bulksmsbd.net/api/smsapi";
-        $apiKey   = "MRk54VtStyOPwoApfyuP";
+        $apiUrl = "http://bulksmsbd.net/api/smsapi";
+        $apiKey = "MRk54VtStyOPwoApfyuP";
         $senderId = env('BULKSMSBD_SENDER_ID', 'theatheletex');
 
         $postData = [
-            "api_key"  => $apiKey,
+            "api_key" => $apiKey,
             "senderid" => $senderId,
-            "number"   => $phone,
-            "message"  => $asciiMsg
+            "number" => $phone,
+            "message" => $asciiMsg,
+            "is_masking" => 1,
         ];
 
         try {
@@ -99,14 +100,14 @@ class TestNotificationController extends Controller
     public function sendEmail(Request $request)
     {
         $request->validate([
-            'email'          => 'required|email',
+            'email' => 'required|email',
             'transaction_id' => 'nullable|string',
-            'name'           => 'required|string',
-            'event_name'     => 'required|string',
-            'order_id'       => 'required|string',
-            'category'       => 'required|string',
-            'tshirt_size'    => 'nullable|string',
-            'gender'         => 'nullable|string',
+            'name' => 'required|string',
+            'event_name' => 'required|string',
+            'order_id' => 'required|string',
+            'category' => 'required|string',
+            'tshirt_size' => 'nullable|string',
+            'gender' => 'nullable|string',
         ]);
 
         $email = trim($request->input('email'));
@@ -122,14 +123,14 @@ class TestNotificationController extends Controller
             $transaction = new Transaction();
             $transaction->id = $request->input('order_id', '15K00304');
             $transaction->amount = 1000;
-            
+
             $participant = new Participant();
             $participant->name = $request->input('name', 'Test Participant');
             $participant->participant_id = $request->input('order_id', '15K00304');
             $participant->category = $request->input('category', '15KM');
             $participant->tshirt_size = $request->input('tshirt_size', 'XL (C-44, L-30)');
             $participant->gender = $request->input('gender', 'Male');
-            
+
             $event = new Event();
             $event->name = $request->input('event_name', 'BYLC Running with Purpose 2026');
 
