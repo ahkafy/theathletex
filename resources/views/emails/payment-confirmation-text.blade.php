@@ -1,42 +1,20 @@
-Thank you for being with us.
+Dear {{ $participant->name }},
 
-Hi {{ $participant->name }},
+Thank you for registering for {{ $event->name }}! We’re excited to have you join us for this incredible run. Below are your registration details:
 
-Just to let you know — we've received your order #{{ $transaction->id }} ({{ $event->name }}), and it is now being processed:
+Order Number: {{ $participant->participant_id ?? $transaction->id }}
 
-[Order #{{ $transaction->id }} ({{ strtolower(str_replace(' ', '-', $event->name)) }}-{{ date('dmY', strtotime($transaction->created_at)) }})]
+Category: {{ $participant->category ?? 'N/A' }}
 
-Participant ID: {{ $participant->participant_id }}
-Event Category: {{ $participant->category ?? 'N/A' }}
-Total: ৳ {{ number_format($transaction->amount, 2) }}
-
-PARTICIPANT INFORMATION:
-@if($participant->dob)
-Date of Birth: {{ date('d-m-Y', strtotime($participant->dob)) }}
-@endif
-@if($participant->gender)
-Gender: {{ ucfirst($participant->gender) }}
-@endif
-@if(isset($participant->blood_group) && $participant->blood_group)
-Blood Group: {{ $participant->blood_group }}
-@endif
-@if(isset($participant->nid) && $participant->nid)
-NID / passport / BIRTH Certificate No.: {{ $participant->nid }}
-@endif
-@if($participant->tshirt_size)
+@if(!empty($participant->tshirt_size))
 T-Shirt Size: {{ $participant->tshirt_size }}
+
 @endif
-@if($participant->emergency_phone)
-Emergency Contact Number: {{ $participant->emergency_phone }}
+@if(!empty($participant->gender))
+Gender: {{ ucfirst($participant->gender) }}
+
 @endif
 
-BILLING ADDRESS:
-{{ $participant->name }}
-{{ $participant->address }}, {{ $participant->thana }}, {{ $participant->district }}, Bangladesh
-{{ $participant->phone }}
-{{ $participant->email }}
+Our team will be in touch soon with further details regarding the event.
 
-Thank you for being with us.
-
----
-This is an automated email. Please do not reply to this email address.
+Best regards,

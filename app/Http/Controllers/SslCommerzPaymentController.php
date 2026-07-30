@@ -88,7 +88,15 @@ class SslCommerzPaymentController extends Controller
         if ($check) {
 
             // Send SMS to participant
-            $msg = "Dear " . $trxInfo->participant->name . ", your payment of " . $trxInfo->amount . " " . $trxInfo->currency . " for " . $trxInfo->event->name . " has been successfully completed. Your Participant ID: " . $trxInfo->participant->participant_id . ". Transaction ID: " . $tran_id . ". Thank you for your participation!";
+            $name      = $trxInfo->participant->name ?? '';
+            $eventName = $trxInfo->event->name ?? '';
+            $orderId   = $tran_id;
+            $category  = $trxInfo->participant->category ?? '';
+
+            $msg = "Dear {$name} your registration for {$eventName} is confirmed! Order # {$orderId} Category: {$category}. Best regards, The Athlete X";
+            // Ensure message contains ASCII characters only
+            $msg = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $msg) ?: $msg;
+
             $this->smsSend($participantPhone, $msg);
 
             // Send confirmation email to participant

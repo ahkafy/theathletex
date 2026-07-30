@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\FormBuilderController;
+use App\Http\Controllers\Admin\TestNotificationController;
 use App\Http\Controllers\EventResultController;
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -64,6 +65,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
         Route::get('/transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
         Route::post('/transactions/store', [TransactionController::class, 'store'])->name('transactions.store');
+
+        // Test Notifications Routes (Temporary)
+        Route::get('/test-notifications', [TestNotificationController::class, 'index'])->name('test-notifications');
+        Route::post('/test-notifications/send-sms', [TestNotificationController::class, 'sendSms'])->name('test-notifications.send-sms');
+        Route::post('/test-notifications/send-email', [TestNotificationController::class, 'sendEmail'])->name('test-notifications.send-email');
 
         // Form Builder Routes
         Route::prefix('forms')->name('forms.')->group(function () {

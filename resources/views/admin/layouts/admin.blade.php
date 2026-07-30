@@ -191,6 +191,16 @@
                         </a>
                     </li>
 
+                    <!-- Testing Section -->
+                    <li class="nav-item mt-3">
+                        <h6 class="text-white-50 text-uppercase px-3 mb-2">Testing (Temp)</h6>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('admin.test-notifications') }}">
+                            <i class="fas fa-paper-plane me-2"></i>Test SMS & Email
+                        </a>
+                    </li>
+
                     <!-- Settings Section -->
                     <li class="nav-item mt-3">
                         <h6 class="text-white-50 text-uppercase px-3 mb-2">Account</h6>
