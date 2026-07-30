@@ -54,7 +54,7 @@ class TestNotificationController extends Controller
         // Send via BulkSMSBD API
         $apiUrl   = "http://bulksmsbd.net/api/smsapi";
         $apiKey   = "MRk54VtStyOPwoApfyuP";
-        $senderId = "8809617642628";
+        $senderId = env('BULKSMSBD_SENDER_ID', 'theatheletex');
 
         $postData = [
             "api_key"  => $apiKey,

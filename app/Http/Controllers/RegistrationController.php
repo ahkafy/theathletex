@@ -237,7 +237,7 @@ class RegistrationController extends Controller
     function smsSend($phone, $msg) {
         $url = "http://bulksmsbd.net/api/smsapi";
         $api_key = "MRk54VtStyOPwoApfyuP";
-        $senderid = "8809617642628";
+        $senderid = env('BULKSMSBD_SENDER_ID', 'theatheletex');
         $number = $phone;
         $message = $msg;
 
